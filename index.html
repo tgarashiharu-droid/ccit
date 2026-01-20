@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CCIT診断～すべての道はCoCo壱に通ず～</title>
+
+  <style>
+    body {
+      font-family: "Noto Sans JP", system-ui, sans-serif;
+      margin: 24px;
+      background: #fffdf8;
+      color: #333;
+      line-height: 1.7;
+    }
+
+    .card {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #c48a2c;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid #c48a2c;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-left: 6px;
+      color: #c48a2c;
+    }
+
+    .q {
+      margin: 24px 0;
+      padding: 16px;
+      background: #faf7f0;
+      border-radius: 12px;
+    }
+
+    .scale-buttons button {
+      padding: 12px 18px;
+      border: none;
+      background: #c48a2c;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 0 4px;
+      font-size: 16px;
+      transition: 0.15s;
+    }
+
+    .scale-buttons button:hover {
+      background: #a87422;
+      transform: translateY(-1px);
+    }
+
+    #controls button {
+      padding: 10px 16px;
+      border: none;
+      background: #e0e0e0;
+      color: #333;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    #controls button:hover {
+      background: #d5d5d5;
+    }
+
+    .muted {
+      color: #777;
+      font-size: 0.9em;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .result {
+      white-space: pre-wrap;
+      background: #1a1a1a;
+      color: #f7f7f7;
+      padding: 18px;
+      border-radius: 12px;
+      margin-top: 12px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        margin: 12px;
+        font-size: 15px;
+      }
+      .card {
+        padding: 18px;
+      }
+      .scale-buttons {
+        flex-direction: column;
+      }
+      .scale-buttons button {
+        width: 100%;
+        margin: 4px 0;
+        font-size: 17px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>CCIT診断～すべての道はCoCo壱に通ず～ <span class="tag">身内用</span></h1>
+    <div class="muted">
+      ※科学的根拠に基づいた正確な診断です。
+    </div>
+
+    <div id="quiz"></div>
+
+    <div id="controls" class="q">
+      <button id="prevBtn" class="hidden">戻る</button>
+      <button id="restartBtn" class="hidden">最初から</button>
+    </div>
+
+    <div id="resultBox" class="hidden">
+      <h2>診断結果</h2>
+      <div id="typeLine"></div>
+      <div id="resultText" class="result"></div>
+      <p class="muted">※賃貸とカレーには"こうしんりょう"がつきものです。</p>
+    </div>
+  </div>
+
+  <script>
+    // 軸：
+    // 1軸：C1（Classic） / A1（Adventure）
+    // 2軸：C2（Cost）    / L2（Luxury）
+    // 3軸：I（Individual） / O（Outgoing）
+    // 4軸：T（Tight）    / F（Flow）
+
+    const questions = [
+      // 1〜4
+      { text: "限定メニューを見ると、つい頼みたくなるタイプだ。", aKey: "C1", bKey: "A1" },
+      { text: "トッピングの値段を見て、一度冷静になる瞬間がある。", aKey: "C2", bKey: "L2" },
+      { text: "友達と来たとき、他人の注文に影響されやすい。", aKey: "I",  bKey: "O"  },
+      { text: "CoCo壱に入る前から、ほぼ注文が決まっている。", aKey: "T",  bKey: "F"  },
+
+      // 5〜8
+      { text: "“チーズ＋ほうれん草”みたいな定番構成が一番安心する。", aKey: "C1", bKey: "A1" },
+      { text: "「今日は贅沢するか…」と言ってトッピングを盛りがちだ。", aKey: "C2", bKey: "L2" },
+      { text: "店員さんに軽く乗られると、つい辛さを上げてしまう。", aKey: "I",  bKey: "O"  },
+      { text: "メニューを見てから気分で構成が変わることが多い。", aKey: "T",  bKey: "F"  },
+
+      // 9〜12
+      { text: "“ナス・きのこ・海の幸”みたいな変わり種に惹かれる。", aKey: "C1", bKey: "A1" },
+      { text: "「コスパ悪いけど美味いからOK」という判断をしがちだ。", aKey: "C2", bKey: "L2" },
+      { text: "他人の「それ美味しそう！」に弱い。", aKey: "I",  bKey: "O"  },
+      { text: "辛さ・量・トッピングが毎回ブレる。", aKey: "T",  bKey: "F"  },
+
+      // 13〜16
+      { text: "“いつもの構成”が存在しない。", aKey: "C1", bKey: "A1" },
+      { text: "トッピングの合計金額が1,000円を超えても気にしない。", aKey: "C2", bKey: "L2" },
+      { text: "ここ壱に来るとき、白いTシャツで来るのをためらわない。", aKey: "I",  bKey: "O"  },
+      { text: "「とりあえず席ついてから考えるか」で注文が始まる。", aKey: "T",  bKey: "F"  }
+    ];
+
+const results = {
+  CCIT: `あなたは「CoCo壱」です。
+CoCo壱において、あなたは“仕様”です。ブレません。
+いつもの構成が完成形であり、改善の余地はないと本気で思っている。
+コスパと満足度のバランスを冷静に最適化しており、
+迷いがないので注文が異様に早い。
+普段から早口で陰キャな性格が初めて功を奏するタイプ。
+CoCo壱の安定供給は、ほぼあなたに支えられています。`,
+
+  CCIF: `あなたは「ピリ辛小悪魔」です。
+ベースは完全に固まっているくせに、ちょい足しだけはやめない。
+“今日はチーズ足すか…”みたいな小さな変化で一生遊べるタイプ。
+常にキープが5人くらいいて、どうせ顔もかわいい。
+大きく外さない安全志向と、微妙な変化への執着が共存している。
+安定を崩さずに遊びたい、欲張りな大人ですあなたは。`,
+
+  CCOT: `あなたは「CoCo伝道師」です。
+自分の構成を“正解”だと本気で思っているし、それを隠す気もない。
+コスパと味のバランスについて語り出すと止まらない。
+友達の注文に口を出す頻度、かなり高めです。
+早口だけども理路整然としている。周りからはマルチ会員だと思われていますよ。`,
+
+  CCOF: `あなたは「1.5軍陽キャ」です。
+自分の“いつもの”はあるけど、空気を壊すほど貫きはしない。
+友達のテンションに合わせてトッピングを変えたりもする。
+直感でちょい足ししても、なぜか毎回そこそこ正解に着地する。
+CoCo壱において、あなたは“場の平均値”を上げる存在です。悪く言えば八方美人。`,
+
+  CLIT: `あなたは「ターバン貴族」です。
+CoCo壱は“高級店”として認識している。
+ほうれん草＋チーズ＋クリームコロッケなど、
+明らかにリッチな構成を、冷静に設計してから投入する。
+予算管理も抜かりなく、贅沢なのに破綻しない。
+CoCo壱を一番上手にとして使いこなしている人種です。`,
+
+  CLIF: `あなたは「インバウンド外国人」です。
+財布のことを考えるタイミングが、だいたい会計後です。
+“今日はチーズ、いやエビフライ…いや両方！”を本当にやる。
+その場のノリでトッピングを盛りまくるが、
+結果的にうまいので誰も止められない。
+CoCo壱に行くたびに、未来の自分にツケを回しています。
+祖国のカレーのほうがスパイス沢山入っている。`,
+
+  CLOT: `あなたは「キルア=ゾルディック」です。
+自分のカレーを“コンテンツ”だと思っている節がある。
+“これ絶対うまいから見て”と言いながら注文するタイプ。
+構成の説明がやたら長く、聞いてないのに解説が始まる。
+CoCo壱を、静かな食事の場ではなくパーティ会場に変える張本人です。
+人と違くてかっこいいですね。`,
+
+  CLOF: `あなたは「エンタメ勢」です。
+トッピング欄を“全部乗せてもいいですよ”と解釈している危険人物。
+気づけばトッピングが3つ増えているのは、もはや日常。
+友達のテンションを上げる代わりに、自分の会計を爆上げしている。
+CoCo壱におけるあなたは、ほぼ花火大会です。隅田川の。`,
+
+  ACIT: `あなたは「データタイプ陰キャ」です。
+新作や限定を“検証対象”として見ているタイプ。
+レビューや構成を事前に調べ、失敗しない範囲で攻める。
+冒険と言いつつ、実際はかなり堅実なチョイスしかしない。
+CoCo壱におけるあなたの一番の敵は、“衝動”ではなく“情報不足”です。
+その曇ったメガネそろそろ外したら？`,
+
+  ACIF: `あなた「さすらいの旅人」です。
+メニューを開いた瞬間から、理性がほぼ機能していない。
+その場のテンションで未知の組み合わせに突っ込んでいく。
+成功と大事故を半々くらいで繰り返すが、本人は楽しそうなので問題なし。
+CoCo壱を“旅先”くらいのノリで扱っている人です。`,
+
+  ACOT: `あなたは「ストーリーテラー」です。
+新作を試したあと、感想を3行で済ませることができないタイプ。
+“この組み合わせ、実は論理的にアリでさ…”から始まる長文が標準装備。
+周囲は半分聞き流しているが、なぜか毎回少しだけ影響を受ける。
+次にCoCo壱にいくのはあなたかもしれません・・・`,
+
+  ACOF: `あなたは「運命の革命家」です。
+期間限定＋変わり種＋辛さ増しを同時にやることに、何のためらいもない。
+その場の勢いで全部乗せて、後から“やりすぎたな”と思うタイプ。
+友達の注文にも平気で口を出し、巻き添えにする。
+CoCo壱を“実験場”というより“爆発現場”にしているのはだいたいあなたです。`,
+
+  ALIT: `あなたは「Eスポーツ戦略家」です。
+豪華かつ攻めた構成を、事前にきっちり設計してから挑む。
+失敗しないギリギリのラインを読むのが異様にうまい。
+一手一手に、妙な知性と経験値がにじみ出ている。
+あなたの注文履歴は、もはやワザップです。`,
+
+  ALIF: `あなたは「スプレーアーティスト」です。
+“今日は豪華にいく！”と思った瞬間から、理性が退場する。
+その場のノリで変なトッピングを足しまくるが、
+なぜか最終的にうまいところに着地しがち。
+説明不能なセンスでCoCo壱を支配する、天才肌のカレー人間です。`,
+
+  ALOT: `あなたは「ド変態ムードメーカー」です。
+自分一人で楽しむより、“みんなで盛り上がるCoCo壱”を選ぶタイプ。
+新作＋豪華構成を、友達と一緒に試すことに喜びを感じる。
+計画的に盛り上げるので、CoCo壱が毎回イベントになる。
+あなたと行くCoCo壱は、だいたい普通の食事では終わりません。`,
+
+  ALOF: `あなたは「コムドット」です。
+CoCo壱に入った瞬間から、もはや理性は観客席。
+最高に豪華で最高に未知の構成を、その場のテンションだけで決める。
+友達の注文にも容赦なく干渉するタイプ。
+CoCo壱を“ただのカレー屋”として扱う気が一切ない人種です。
+Xで定期的に炎上します。`
+};
+
+    let idx = 0;
+    let answers = [];
+
+    function emptyScores() {
+      return { C1:0, A1:0, C2:0, L2:0, I:0, O:0, T:0, F:0 };
+    }
+
+    function applyScore(q, value, total) {
+      if (value <= 2) {
+        total[q.aKey] += value;
+      } else if (value >= 4) {
+        total[q.bKey] += value;
+      } // 3はどちらにも加点しない中立
+    }
+
+    function computeType() {
+      const total = emptyScores();
+      answers.forEach(ans => applyScore(ans.q, ans.value, total));
+
+      const first  = total.C1 >= total.A1 ? "C" : "A";
+      const second = total.C2 >= total.L2 ? "C" : "L";
+      const third  = total.I  >= total.O  ? "I" : "O";
+      const fourth = total.T  >= total.F  ? "T" : "F";
+
+      return { type: first + second + third + fourth, total };
+    }
+
+    function render() {
+      const quiz = document.getElementById("quiz");
+      const resultBox = document.getElementById("resultBox");
+      const prevBtn = document.getElementById("prevBtn");
+      const restartBtn = document.getElementById("restartBtn");
+
+      if (idx >= questions.length) {
+        quiz.innerHTML = "";
+        resultBox.classList.remove("hidden");
+        prevBtn.classList.add("hidden");
+        restartBtn.classList.remove("hidden");
+
+        const { type, total } = computeType();
+        document.getElementById("typeLine").innerHTML =
+          `<div class="muted">タイプ：<b>${type}</b>（C/A:${total.C1}/${total.A1}, C/L:${total.C2}/${total.L2}, I/O:${total.I}/${total.O}, T/F:${total.T}/${total.F}）</div>`;
+        document.getElementById("resultText").textContent =
+          results[type] ?? generic(type);
+        return;
+      }
+
+      resultBox.classList.add("hidden");
+      restartBtn.classList.add("hidden");
+
+      const q = questions[idx];
+      quiz.innerHTML = `
+        <div class="q">
+          <div><b>Q${idx + 1}/${questions.length}</b>　${q.text}</div>
+
+          <div class="scale-wrapper" style="margin-top:10px; text-align:center;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:14px; color:#555;">
+              <span style="flex:1; text-align:center;">甘口評価</span>
+              <span style="flex:1;"></span>
+              <span style="flex:1;"></span>
+              <span style="flex:1;"></span>
+              <span style="flex:1; text-align:center;">辛口評価</span>
+            </div>
+
+            <div class="scale-buttons" style="display:flex; justify-content:space-between;">
+              <button data-v="1" style="flex:1; margin:0 4px;">1</button>
+              <button data-v="2" style="flex:1; margin:0 4px;">2</button>
+              <button data-v="3" style="flex:1; margin:0 4px;">3</button>
+              <button data-v="4" style="flex:1; margin:0 4px;">4</button>
+              <button data-v="5" style="flex:1; margin:0 4px;">5</button>
+            </div>
+          </div>
+
+          <div class="muted" style="margin-top:10px;">※直感で押せ。深く考えるとカレーが冷める。</div>
+        </div>
+      `;
+
+      document.querySelectorAll("button[data-v]").forEach(btn => {
+        btn.onclick = () => {
+          const value = Number(btn.dataset.v);
+          answers[idx] = { q, value };
+          idx++;
+          render();
+        };
+      });
+
+      prevBtn.classList.toggle("hidden", idx === 0);
+    }
+
+    document.getElementById("prevBtn").onclick = () => {
+      if (idx > 0) {
+        idx--;
+        answers.pop();
+        render();
+      }
+    };
+
+    document.getElementById("restartBtn").onclick = () => {
+      idx = 0;
+      answers = [];
+      render();
+    };
+
+    render();
+  </script>
+</body>
+</html>
