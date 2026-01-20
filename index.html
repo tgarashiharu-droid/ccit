@@ -6,117 +6,96 @@
   <title>CCIT診断～すべての道はCoCo壱に通ず～</title>
 
   <style>
-    body {
-      font-family: "Noto Sans JP", system-ui, sans-serif;
-      margin: 24px;
-      background: #fffdf8;
-      color: #333;
-      line-height: 1.7;
-    }
+body {
+  font-family: "Noto Sans JP", system-ui, sans-serif;
+  margin: 24px;
+  background: #fffdf8;
+  color: #333;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
 
-    .card {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 24px;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    }
+.card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
 
-    h1 {
-      margin: 0 0 12px;
-      font-size: 26px;
-      font-weight: 700;
-      color: #c48a2c;
-    }
+h1 {
+  margin: 0 0 12px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #c48a2c;
+}
 
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border: 1px solid #c48a2c;
-      border-radius: 999px;
-      font-size: 12px;
-      margin-left: 6px;
-      color: #c48a2c;
-    }
+.q {
+  margin: 24px 0;
+  padding: 16px;
+  background: #faf7f0;
+  border-radius: 12px;
+}
 
-    .q {
-      margin: 24px 0;
-      padding: 16px;
-      background: #faf7f0;
-      border-radius: 12px;
-    }
+.scale-wrapper {
+  margin-top: 10px;
+}
 
-    .scale-buttons button {
-      padding: 12px 18px;
-      border: none;
-      background: #c48a2c;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 0 4px;
-      font-size: 16px;
-      transition: 0.15s;
-    }
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
 
-    .scale-buttons button:hover {
-      background: #a87422;
-      transform: translateY(-1px);
-    }
+.scale-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
 
-    #controls button {
-      padding: 10px 16px;
-      border: none;
-      background: #e0e0e0;
-      color: #333;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
+.scale-buttons button {
+  flex: 1;
+  padding: 14px 0;
+  border: none;
+  background: #c48a2c;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.15s;
+}
 
-    #controls button:hover {
-      background: #d5d5d5;
-    }
+.scale-buttons button:hover {
+  background: #a87422;
+  transform: translateY(-1px);
+}
 
-    .muted {
-      color: #777;
-      font-size: 0.9em;
-    }
+@media (max-width: 600px) {
+  body {
+    margin: 12px;
+    font-size: 16px;
+  }
 
-    .hidden {
-      display: none;
-    }
+  .card {
+    padding: 18px;
+  }
 
-    .result {
-      white-space: pre-wrap;
-      background: #1a1a1a;
-      color: #f7f7f7;
-      padding: 18px;
-      border-radius: 12px;
-      margin-top: 12px;
-      line-height: 1.8;
-    }
+  h1 {
+    font-size: 22px;
+  }
 
-    @media (max-width: 600px) {
-      body {
-        margin: 12px;
-        font-size: 15px;
-      }
-      .card {
-        padding: 18px;
-      }
-      .scale-buttons {
-        flex-direction: column;
-      }
-      .scale-buttons button {
-        width: 100%;
-        margin: 4px 0;
-        font-size: 17px;
-      }
-      h1 {
-        font-size: 22px;
-      }
-    }
+  .scale-labels {
+    font-size: 13px;
+  }
+
+  .scale-buttons button {
+    padding: 16px 0;
+    font-size: 18px;
+  }
+}
   </style>
 </head>
 
@@ -337,14 +316,20 @@ Xで定期的に炎上します。`
         <div class="q">
           <div><b>Q${idx + 1}/${questions.length}</b>　${q.text}</div>
 
-          <div class="scale-wrapper" style="margin-top:10px; text-align:center;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:14px; color:#555;">
-              <span style="flex:1; text-align:center;">甘口評価</span>
-              <span style="flex:1;"></span>
-              <span style="flex:1;"></span>
-              <span style="flex:1;"></span>
-              <span style="flex:1; text-align:center;">辛口評価</span>
-            </div>
+          <div class="scale-wrapper">
+  <div class="scale-labels">
+    <span>甘口評価</span>
+    <span>辛口評価</span>
+  </div>
+
+  <div class="scale-buttons">
+    <button data-v="1">1</button>
+    <button data-v="2">2</button>
+    <button data-v="3">3</button>
+    <button data-v="4">4</button>
+    <button data-v="5">5</button>
+  </div>
+</div>
 
             <div class="scale-buttons" style="display:flex; justify-content:space-between;">
               <button data-v="1" style="flex:1; margin:0 4px;">1</button>
@@ -388,4 +373,5 @@ Xで定期的に炎上します。`
     render();
   </script>
 </body>
+
 </html>
