@@ -69,12 +69,12 @@
         }
         .animate-reveal { animation: fadeIn 0.8s ease forwards; }
 
-        /* プロファイル画像用 */
+        /* プロファイル画像用：正方形から16:9のワイドに変更 */
         .profile-image-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 800px; /* ワイドなので横幅を広げます */
             margin: 0 auto 2rem;
-            aspect-ratio: 1;
+            aspect-ratio: 16 / 9; /* 1から16/9に変更 */
             background: #1a1d23;
             border: 1px solid rgba(197, 160, 89, 0.3);
             position: relative;
@@ -427,58 +427,58 @@
             }
         }
 function showResult() {
-    document.getElementById("quizArea").classList.add("hidden");
-    document.getElementById("progressContainer").classList.add("hidden");
-    document.getElementById("resultArea").classList.remove("hidden");
+            document.getElementById("quizArea").classList.add("hidden");
+            document.getElementById("progressContainer").classList.add("hidden");
+            document.getElementById("resultArea").classList.remove("hidden");
 
-    // 1. 各軸のスコアをリセット（同点回避の微小乱数を付与）
-    const scores = { 
-        C1: Math.random() * 0.01, A1: 0, 
-        C2: Math.random() * 0.01, L2: 0, 
-        I:  Math.random() * 0.01, O:  0, 
-        T:  Math.random() * 0.01, F:  0 
-    };
+            // 1. 各軸のスコアをリセット（微小な乱数を加えて「全問3」でも結果が分散するようにします）
+            const scores = { 
+                C1: Math.random() * 0.01, A1: 0, 
+                C2: Math.random() * 0.01, L2: 0, 
+                I:  Math.random() * 0.01, O:  0, 
+                T:  Math.random() * 0.01, F:  0 
+            };
 
-    // 2. 回答をスコアに換算
-    answers.forEach(ans => {
-        const weight = ans.value - 3; // -2, -1, 0, 1, 2
-        if (weight < 0) {
-            scores[ans.q.aKey] += Math.abs(weight);
-        } else if (weight > 0) {
-            scores[ans.q.bKey] += weight;
+            // 2. 回答をスコアに換算
+            answers.forEach(ans => {
+                const weight = ans.value - 3; 
+                if (weight < 0) {
+                    scores[ans.q.aKey] += Math.abs(weight);
+                } else if (weight > 0) {
+                    scores[ans.q.bKey] += weight;
+                }
+            });
+
+            // 3. 各項目の二択判定（ここをscoresに統一します）
+            const finalType = [
+                scores.C1 >= scores.A1 ? "C" : "A",
+                scores.C2 >= scores.L2 ? "C" : "L",
+                scores.I >= scores.O ? "I" : "O",
+                scores.T >= scores.F ? "T" : "F"
+            ].join("");
+
+            const data = results[finalType] || results.CCIT;
+            
+            // 4. 画像の表示（拡張子を確実に.jpgで指定）
+            const imgElement = document.getElementById("resImage");
+            imgElement.src = `${typeImageMap[finalType].replace('.png', '.jpg')}`;
+
+            // 5. テキストの反映
+            document.getElementById("resId").textContent = `TYPE: ${finalType}`;
+            document.getElementById("resTitle").textContent = data.title;
+            document.getElementById("resMain").textContent = data.main;
+            document.getElementById("resAdvice").textContent = data.advice;
+            document.getElementById("resHenken").innerHTML = data.henken.map(h => `
+                <li class="relative ml-6 text-base md:text-lg text-ivory/90 list-item-bullet hover:text-gold-accent transition-colors duration-300">
+                    ${h}
+                </li>
+            `).join("");
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    });
-
-    // 3. 各項目の二択判定（ここを scores に統一しました）
-    const finalType = [
-        scores.C1 >= scores.A1 ? "C" : "A",
-        scores.C2 >= scores.L2 ? "C" : "L",
-        scores.I >= scores.O ? "I" : "O",
-        scores.T >= scores.F ? "T" : "F"
-    ].join("");
-
-    const data = results[finalType] || results.CCIT;
-    
-    // 4. 画像の表示（.jpg への対応を確実に）
-    const imgElement = document.getElementById("resImage");
-    const imageFile = typeImageMap[finalType] || "1.jpg";
-    imgElement.src = imageFile.replace('.png', '.jpg');
-
-    // 5. テキストの反映
-    document.getElementById("resId").textContent = `TYPE: ${finalType}`;
-    document.getElementById("resTitle").textContent = data.title;
-    document.getElementById("resMain").textContent = data.main;
-    document.getElementById("resAdvice").textContent = data.advice;
-    document.getElementById("resHenken").innerHTML = data.henken.map(h => `
-        <li class="relative ml-6 text-base md:text-lg text-ivory/90 list-item-bullet hover:text-gold-accent transition-colors duration-300">
-            ${h}
-        </li>
-    `).join("");
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
         updateUI();
     </script>
 </body>
 </html>
+
