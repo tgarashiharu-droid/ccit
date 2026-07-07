@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@300;400;700&family=Playfair+Display:ital,wght@0,900;1,700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -96,6 +96,23 @@
             background: linear-gradient(to top, rgba(10, 12, 16, 0.8) 0%, transparent 40%);
             pointer-events: none;
         }
+        .compat-card {
+            background: rgba(197, 160, 89, 0.06);
+            border: 1px solid rgba(197, 160, 89, 0.25);
+        }
+        .compat-thumb {
+            width: 88px;
+            height: 88px;
+            flex-shrink: 0;
+            border-radius: 9999px;
+            overflow: hidden;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+        }
+        .compat-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body class="min-h-screen font-sans selection:bg-gold-accent/30">
@@ -163,13 +180,31 @@
                 </div>
             </section>
 
-            <section>
+            <section class="mb-16">
                 <div class="flex items-center gap-4 mb-6">
                     <span class="font-serif italic text-gold-accent text-2xl">03.</span>
                     <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">私生活に透ける特徴</h2>
                 </div>
                 <div class="separator mb-8"></div>
                 <ul id="resHenken" class="space-y-6"></ul>
+            </section>
+
+            <section>
+                <div class="flex items-center gap-4 mb-6">
+                    <span class="font-serif italic text-gold-accent text-2xl">04.</span>
+                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">相性の良いタイプ</h2>
+                </div>
+                <div class="separator mb-8"></div>
+                <div class="compat-card rounded-2xl p-6 md:p-8 flex items-center gap-6">
+                    <div class="compat-thumb">
+                        <img id="compatImage" src="" alt="Compatible Type">
+                    </div>
+                    <div class="flex-1">
+                        <span id="compatId" class="text-gold-accent tracking-[0.2em] text-xs uppercase font-bold">TYPE: CCIT</span>
+                        <h3 id="compatTitle" class="font-serif text-xl md:text-2xl font-bold mt-1 mb-3"></h3>
+                        <p id="compatReason" class="text-sm md:text-base leading-relaxed text-ivory/80"></p>
+                    </div>
+                </div>
             </section>
 
             <div class="mt-16 pt-8 border-t border-white/5 text-center">
@@ -216,7 +251,8 @@
                     "コンビニのレジ袋を有料化から数年経った今でも、心の中で呪いながら、シワ一つないエコバッグを几帳面に畳んでいる。",
                     "スマホの通知バッジが1つでも残っていることが許せず、深夜でも全てのアプリを開いて既読にするまで眠れない。",
                     "靴を脱ぐ際、次に出る時の角度を逆算して完璧な並行に揃えないと、外出先でもずっとそのことが気にかかる。"
-                ] 
+                ],
+                compat: { type: "CCIF", reason: "同じく変化を嫌う者同士、注文内容も会話も一切更新されないまま何年でも付き合える。互いの停滞を「安定」と呼び合い、誰にも邪魔されない退屈の巣を築くだろう。" }
             },
             CCIF: { 
                 title: "臆病な安牌主義者", 
@@ -228,7 +264,8 @@
                     "他人の不倫や炎上ニュースをチェックしては「自分はまだマシだ」と再確認して、暗い部屋で一人安堵している。",
                     "トイレットペーパーの残量が極小になると、次の人のために替えるのを避けて、自分が最後の1枚を使わないように調整する。",
                     "飲み会の店選びで、自分が幹事でもないのに食べログの評価が3.5以下だと、内心でその幹事を無能の烙印を押す。"
-                ] 
+                ],
+                compat: { type: "CCIT", reason: "互いの臆病さを咎めない唯一の相手。相手が変化を拒んでくれるほど、自分の安牌な選択も正当化できるという、共依存にも似た心地よさがある。" }
             },
             CCOT: { 
                 title: "教条的なコストカッター", 
@@ -240,7 +277,8 @@
                     "他人のファッションに対して「原価はこれくらいだろう」「ブランド代だけだ」と勝手に脳内で査定して悦に浸る。",
                     "Amazonのレビューで長文の星1を付けている自分を、悪徳業者を摘発する正義の告発者だと思い込んでいる。",
                     "スーパーの半額シールが貼られる時間を完全に把握しており、店員の後ろをステルス機のように追跡する。"
-                ] 
+                ],
+                compat: { type: "ACIT", reason: "データと理屈でしか会話が成立しない者同士。デート中でもレシートの原価計算で盛り上がれる、極めて実務的で乾いた絆が生まれる。" }
             },
             CCOF: { 
                 title: "意志なきカメレオン", 
@@ -252,7 +290,8 @@
                     "美容師に「お任せで」と言った後、完成が内心気に入らなくても、精一杯の笑顔で「完璧です！」と言ってチップを渡す勢いで感謝する。",
                     "職場の飲み会で、上司が頼んだものと同じメニューを頼むのが、社会人としての最も安全な生存戦略だと信じている。",
                     "映画の感想を話す前に、まずTwitterで「（映画名）　感想」で検索して、世間の多数派意見に自分の感想をチューニングする。"
-                ] 
+                ],
+                compat: { type: "ALOT", reason: "自分では何も決められないあなたと、他人に決めさせたくて仕方がない相手。主従関係が瞬時に成立し、注文から人生設計まで丸投げできる完璧な依存先。" }
             },
             CLIT: { 
                 title: "冷徹な合理的貴族", 
@@ -264,7 +303,8 @@
                     "ブランドロゴが極小に入った高価な服を着て、それに気づかない周囲の無知を心の底から蔑んでいる。",
                     "ワインやコーヒーの銘柄には詳しいふりをするが、実際はラベルの値段と希少価値でしか味の良し悪しを判断していない。",
                     "「忙しい」が口癖だが、実際はスケジュールを埋めることで、自分の存在価値のなさを直視することから逃げているだけ。"
-                ] 
+                ],
+                compat: { type: "ALIT", reason: "見栄の張り合いを黙って許容し合える唯一の相手。お互いの虚栄心を刺激で高め合いながらも、値札の話は決してしないという紳士協定が自然に成立する。" }
             },
             CLIF: { 
                 title: "刹那主義のギャンブラー", 
@@ -276,7 +316,8 @@
                     "パチンコやギャンブルで勝った時だけ友人に連絡して奢り、負けた時はこの世から消えたかのように音信不通になる。",
                     "部屋には「いつか使う」「明日からやる」と思って買った、未開封のダイエット器具や教材がゴミの山を成している。",
                     "スマホのバッテリーが残り3%になっても充電器を探さず、運命に身を任せるギャンブルを毎日楽しんでいる。"
-                ] 
+                ],
+                compat: { type: "ALOF", reason: "計画性ゼロ同士、財布の中身を確認せずに突撃できる最強にして最悪のコンビ。二人で沈む船に乗るなら、少なくとも孤独ではない。" }
             },
             CLOT: { 
                 title: "承認欲求の化け物", 
@@ -288,7 +329,8 @@
                     "有名人と一瞬すれ違っただけの写真を、一生プロフィールのトップに置き、自分の威光であるかのように振る舞う。",
                     "フォロワー数で他人の人間的価値をランク付けし、自分より少ない人間には無意識にタメ口で接する。",
                     "絶景スポットに行っても、景色を見ずにカメラのモニター越しに自分をチェックし、結局一度も生眼で景色を見ずに帰る。"
-                ] 
+                ],
+                compat: { type: "ACOT", reason: "撮る側と語る側、見事な役割分担が成立する。あなたが盛り付けを撮影している間、相手が「戦略」を語り続けてくれるので、実は誰も味を気にしなくて済む。" }
             },
             CLOF: { 
                 title: "破滅型パリピ", 
@@ -300,7 +342,8 @@
                     "恋人の名前を間違えて呼び、それを「酒のせい」にして済ませようとする。その後も反省せず同じ間違いを繰り返す。",
                     "居酒屋のトイレにスマホを忘れ、戻ってきた時に「誰か取っただろ」と周囲の客を疑いの目で見る。",
                     "他人の靴を「似ていたから」という理由で間違えて履いて帰り、そのまま自分のものとして平然と使い続ける。"
-                ] 
+                ],
+                compat: { type: "ACOF", reason: "ノリの暴走を止める人間がどこにもいないので、二人でいる限り誰にも迷惑をかけずに済む……はずが、被害は常に周囲の店員に集中する。" }
             },
             ACIT: { 
                 title: "陰湿なデータマイナー", 
@@ -312,7 +355,8 @@
                     "他人のSNSの過去の投稿を数年分遡り、矛盾点を見つけてはスクリーンショットを撮って保存し、ニヤニヤしながら監視している。",
                     "Wikipediaの記述を丸暗記して、さも自分の専門知識のように他人に語り、間違いを指摘されると「解釈の違い」だと逃げる。",
                     "飲食店で注文する前に、まずGoogleマップの低評価レビューだけを読んで、粗探しをする準備を整えてから入店する。"
-                ] 
+                ],
+                compat: { type: "CCOT", reason: "理屈と裏付けがなければ何も信じられない者同士。感情の代わりに引用元とレビュー件数で愛を語り合う、極めて即物的な関係が築ける。" }
             },
             ACIF: { 
                 title: "迷走する遭難者", 
@@ -324,7 +368,8 @@
                     "部屋のインテリアにこだわりすぎて、寝る場所さえ確保できていない。椅子が主役で人間が脇役の生活。 ",
                     "会話にカタカナの専門用語を多用し、相手が困惑するのを見て「知的水準が合わない」と一人で嘆く寂しい人生。",
                     "カフェで一番複雑な名前のドリンクを頼み、味も分からず「豆の焙煎が〜」と独り言を言いながらSNSに投稿する。"
-                ] 
+                ],
+                compat: { type: "ALIF", reason: "誰にも理解されない独自路線を、唯一「わかるよ」と頷き合える相手。二人の世界では珍妙な組み合わせも立派な芸術として成立してしまう。" }
             },
             ACOT: { 
                 title: "誇大妄想の語り部", 
@@ -336,7 +381,8 @@
                     "自己啓発本を大量に読み、実践することなく「もうその理論は知っている」と嘯き、自分の現状の惨めさを知識で隠蔽する。",
                     "プロ野球の監督に対して、テレビの前で完璧な采配を説教し続け、自分の人生の采配の失敗からは目を逸らし続ける。",
                     "他人の成功に対して「運が良かっただけ」「スキームが古い」と難癖をつけ、自分が動かない理由を正当化する。"
-                ] 
+                ],
+                compat: { type: "CLOT", reason: "聞き役として写真を撮り続けてくれる相手がいれば、あなたの長広舌は誰にも遮られない。相手も撮影に夢中で内容を聞いていないので、衝突が起きようがない。" }
             },
             ACOF: { 
                 title: "情緒不安定な台風", 
@@ -348,7 +394,8 @@
                     "恋人への態度が、一分単位で「溺愛」と「冷徹な無視」の間を行き来し、相手の精神を崩壊させる。本人はそれを「愛」と呼ぶ。",
                     "スーパーでカゴいっぱいに商品を詰め込んだ後、レジの手前で急に全てが虚しくなり、商品を棚に戻さず放置して帰る。",
                     "映画館で上映が始まった直後に「やっぱり違うのが観たい」と思い始め、最後まで座っているのが苦行になる。"
-                ] 
+                ],
+                compat: { type: "CLOF", reason: "気分の乱高下にツッコミを入れず、むしろ一緒に乗っかってくれる相手。二人の予定はいつも直前で変わるが、それを「自由だ」と笑い合える珍しい相性。" }
             },
             ALIT: { 
                 title: "計算高い成金", 
@@ -360,7 +407,8 @@
                     "「最近忙しくて寝てない」が口癖だが、実際は深夜まで自分への賞賛コメントをSNSで探しているだけの無益な時間。",
                     "自分より立場が下だと判断した相手のフルネームを、何度会っても絶対に覚えようとしない（それが強者の特権だと思っている）。",
                     "ホテルのアメニティを、使う予定もないのに全て持ち帰り、家の洗面所に並べて「旅慣れた自分」に酔いしれる。"
-                ] 
+                ],
+                compat: { type: "CLIT", reason: "見栄の張り合いを黙って許容し合える唯一の相手。互いの虚栄心を刺激で高め合いながらも、値札の話は決してしないという紳士協定が自然に成立する。" }
             },
             ALIF: { 
                 title: "色彩を失った芸術家", 
@@ -372,7 +420,8 @@
                     "白湯を飲みながら、ヴィンテージの椅子を1時間無言で眺めることを「真の贅沢」だと言い張る、中身のないこだわり。",
                     "他人の作品に対して「魂が宿っていない」と上から目線で評価するが、自分の作品は誰の魂にも響いていない。",
                     "雨の日にあえて傘を差さずに歩き、濡れている自分を「悲劇の主人公」として脳内で映画化している。"
-                ] 
+                ],
+                compat: { type: "ACIF", reason: "誰にも理解されない独自路線を、唯一「わかるよ」と頷き合える相手。二人の世界では珍妙な組み合わせも立派な芸術として成立してしまう。" }
             },
             ALOT: { 
                 title: "集団催眠の主導者", 
@@ -384,7 +433,8 @@
                     "他人の悩みを「私の時はもっと大変だった」と、いつの間にか自分の話にすり替え、勝手に自己完結してスッキリしている。",
                     "お土産に、貰っても捨てるに捨てられないセンスの悪い置物を買い、相手が困惑するのを見て「照れている」とポジティブに誤変換する。",
                     "集合写真で必ず自分が中心に写ろうとし、他人が半目でも、自分が可愛く写っていれば即座にSNSにアップする。"
-                ] 
+                ],
+                compat: { type: "CCOF", reason: "自分では何も決められない相手にとって、あなたの強引な提案はむしろ救いになる。主従関係が瞬時に成立し、注文から人生設計まで押し付け放題の理想的な相手。" }
             },
             ALOF: { 
                 title: "完全なるカオス", 
@@ -396,7 +446,8 @@
                     "部屋の床が一切見えない。脱ぎ捨てた服と一週間前のコンビニ袋が地層を成し、独自の生態系が誕生している。",
                     "「なんとかなる」が座右の銘だが、実際は周囲のまともな人間が、あなたの尻拭いをして「なんとかなっている」だけである。",
                     "財布を持たずに外出し、「後で返すから」と言って友人に借りた金を、翌日には完全に忘却する特殊能力。"
-                ] 
+                ],
+                compat: { type: "CLIF", reason: "計画性ゼロ同士、財布の中身を確認せずに突撃できる最強にして最悪のコンビ。二人で沈む船に乗るなら、少なくとも孤独ではない。" }
             }
         };
         let currentIdx = 0;
@@ -471,6 +522,18 @@
                     ${h}
                 </li>
             `).join("");
+
+            // 相性の良いタイプの表示
+            const compat = data.compat;
+            if (compat) {
+                const compatType = compat.type;
+                const compatData = results[compatType] || results.CCIT;
+                const compatImageFile = (typeImageMap[compatType] || "1.jpg").replace('.png', '.jpg');
+                document.getElementById("compatImage").src = compatImageFile;
+                document.getElementById("compatId").textContent = `TYPE: ${compatType}`;
+                document.getElementById("compatTitle").textContent = compatData.title;
+                document.getElementById("compatReason").textContent = compat.reason;
+            }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -479,4 +542,3 @@
     </script>
 </body>
 </html>
-
