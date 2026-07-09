@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoCo壱 Order Analysis Profiler | Complete Edition</title>
+    <title>CoCo壱 Order Analysis Profiler</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,645 +49,65 @@
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent);
         }
-        .list-item-bullet::before {
-            content: "◆";
-            color: #c5a059;
-            font-size: 0.7rem;
-            position: absolute;
-            left: -1.5rem;
-            top: 0.6rem;
+        .menu-card {
+            transition: all 0.25s ease;
         }
-        .progress-bar {
-            height: 2px;
-            background: #c5a059;
-            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .hidden { display: none; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-reveal { animation: fadeIn 0.8s ease forwards; }
-
-        /* プロファイル画像用：16:9のワイドに変更 */
-        .profile-image-container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            aspect-ratio: 16 / 9; 
-            background: #1a1d23;
-            border: 1px solid rgba(197, 160, 89, 0.3);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(197, 160, 89, 0.1);
-        }
-        .profile-image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: contrast(1.1) brightness(0.9);
-        }
-        .profile-image-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to top, rgba(10, 12, 16, 0.8) 0%, transparent 40%);
-            pointer-events: none;
-        }
-        .compat-card {
+        .menu-card:hover {
+            border-color: #c5a059;
             background: rgba(197, 160, 89, 0.06);
-            border: 1px solid rgba(197, 160, 89, 0.25);
-        }
-        .compat-thumb {
-            width: 88px;
-            height: 88px;
-            flex-shrink: 0;
-            border-radius: 9999px;
-            overflow: hidden;
-            border: 1px solid rgba(197, 160, 89, 0.4);
-        }
-        .compat-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* レアタイプ演出 */
-        @keyframes legendaryGlow {
-            0%, 100% { box-shadow: 0 0 18px 2px rgba(197, 160, 89, 0.35), inset 0 0 30px rgba(197, 160, 89, 0.05); }
-            50% { box-shadow: 0 0 32px 6px rgba(197, 160, 89, 0.6), inset 0 0 40px rgba(197, 160, 89, 0.1); }
-        }
-        .legendary-frame {
-            border: 1px solid rgba(197, 160, 89, 0.8) !important;
-            animation: legendaryGlow 2.4s ease-in-out infinite;
-        }
-        .legendary-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: linear-gradient(135deg, rgba(197,160,89,0.15), rgba(142,109,69,0.15));
-            border: 1px solid rgba(197, 160, 89, 0.5);
-            padding: 0.4rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            font-weight: 700;
-            color: #c5a059;
-            margin-bottom: 1.5rem;
-        }
-
-        /* 軸スコアゲージ */
-        .gauge-row {
-            margin-bottom: 1.5rem;
-        }
-        .gauge-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            margin-bottom: 0.4rem;
-            color: rgba(242, 240, 233, 0.7);
-        }
-        .gauge-track {
-            position: relative;
-            height: 10px;
-            border-radius: 9999px;
-            background: rgba(255, 255, 255, 0.08);
-            overflow: hidden;
-        }
-        .gauge-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            border-radius: 9999px;
-            background: linear-gradient(90deg, #8e6d45, #c5a059);
-            transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: translateY(-4px);
         }
     </style>
 </head>
 <body class="min-h-screen font-sans selection:bg-gold-accent/30">
 
-    <div class="max-w-4xl mx-auto px-6 py-12 md:py-24">
-        
-        <header class="text-center mb-12">
+    <div class="max-w-2xl mx-auto px-6 py-16 md:py-28">
+
+        <header class="text-center mb-16">
             <span class="text-gold-accent tracking-[0.4em] text-xs uppercase font-bold opacity-70">Specimen Profiling</span>
-            <h1 class="font-serif text-3xl md:text-5xl font-black mt-4 mb-2 tracking-tight">
-                CCIT <span class="gradient-text italic">Final Assessment</span>
+            <h1 class="font-serif text-3xl md:text-5xl font-black mt-4 mb-4 tracking-tight">
+                CoCo壱 <span class="gradient-text italic">Order Analysis</span>
             </h1>
-            <div id="progressContainer" class="w-32 h-[2px] bg-white/10 mx-auto mt-6 overflow-hidden">
-                <div id="progressBar" class="progress-bar" style="width: 0%"></div>
-            </div>
+            <p class="text-ivory/50 text-sm leading-relaxed">
+                あなたのトッピング選びには、性格のすべてが透けて出る。<br>
+                進みたい方を選んで、審判を受けろ。
+            </p>
         </header>
 
-        <div id="quizArea" class="glass-panel rounded-3xl p-8 md:p-16 relative overflow-hidden">
-            <div id="qNum" class="font-serif italic text-gold-accent mb-4">Analysis: 01 / 16</div>
-            <div id="qText" class="text-xl md:text-2xl font-bold leading-relaxed mb-12 min-h-[120px]"></div>
+        <div class="grid grid-cols-1 gap-6">
 
-            <div class="grid grid-cols-5 gap-3 md:gap-6 mb-8">
-                <button onclick="handleAnswer(1)" class="aspect-square border border-white/10 hover:border-gold-accent hover:bg-gold-accent/10 transition-all font-serif text-2xl flex items-center justify-center rounded-xl">1</button>
-                <button onclick="handleAnswer(2)" class="aspect-square border border-white/10 hover:border-gold-accent hover:bg-gold-accent/10 transition-all font-serif text-2xl flex items-center justify-center rounded-xl">2</button>
-                <button onclick="handleAnswer(3)" class="aspect-square border border-white/10 hover:border-gold-accent hover:bg-gold-accent/10 transition-all font-serif text-2xl flex items-center justify-center rounded-xl">3</button>
-                <button onclick="handleAnswer(4)" class="aspect-square border border-white/10 hover:border-gold-accent hover:bg-gold-accent/10 transition-all font-serif text-2xl flex items-center justify-center rounded-xl">4</button>
-                <button onclick="handleAnswer(5)" class="aspect-square border border-white/10 hover:border-gold-accent hover:bg-gold-accent/10 transition-all font-serif text-2xl flex items-center justify-center rounded-xl">5</button>
-            </div>
-            <div class="flex justify-between text-[10px] tracking-widest text-white/40 uppercase font-bold px-2">
-                <span>Strongly Disagree</span>
-                <span>Strongly Agree</span>
-            </div>
+            <a href="diagnosis.html" class="menu-card glass-panel rounded-3xl p-8 md:p-10 block">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="font-serif italic text-gold-accent text-3xl">01.</span>
+                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">本格診断</h2>
+                </div>
+                <div class="separator mb-5"></div>
+                <p class="text-ivory/70 text-sm md:text-base leading-relaxed mb-4">
+                    16問の質問から、あなたの注文に隠された性格を16タイプに徹底分解する。
+                    総評・生存戦略・私生活の特徴・相性の良いタイプまで、逃げ場のない完全な人物像を突きつける。
+                </p>
+                <span class="text-gold-accent text-xs tracking-[0.2em] uppercase font-bold">診断をはじめる →</span>
+            </a>
+
+            <a href="mood_fortune.html" class="menu-card glass-panel rounded-3xl p-8 md:p-10 block">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="font-serif italic text-gold-accent text-3xl">02.</span>
+                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">気分でトッピング占い</h2>
+                </div>
+                <div class="separator mb-5"></div>
+                <p class="text-ivory/70 text-sm md:text-base leading-relaxed mb-4">
+                    3つの質問に答えるだけ。深く考えたくない日のための、今日のあなたにふさわしい一皿を占う簡易版。
+                </p>
+                <span class="text-gold-accent text-xs tracking-[0.2em] uppercase font-bold">占いをはじめる →</span>
+            </a>
+
         </div>
 
-        <main id="resultArea" class="hidden glass-panel rounded-3xl p-8 md:p-16 animate-reveal">
-            <div class="text-center mb-8">
-                <span class="text-gold-accent tracking-[0.4em] text-xs uppercase font-bold opacity-60">Visual Confirmation</span>
-            </div>
-            <div class="profile-image-container rounded-2xl">
-                <img id="resImage" src="" alt="Type Evidence" onerror="this.src='https://via.placeholder.com/800x450/1a1d23/c5a059?text=EVIDENCE_MISSING'">
-                <div class="profile-image-overlay"></div>
-            </div>
+        <footer class="text-center mt-16">
+            <span class="text-ivory/30 text-[10px] tracking-[0.2em] uppercase">CoCo壱 Order Analysis Profiler — Complete Edition</span>
+        </footer>
 
-            <div class="text-center mb-12">
-                <div id="legendaryBadge" class="hidden justify-center">
-                    <span class="legendary-badge">★ <span id="legendaryText">称号：伝説級</span> ★</span>
-                </div>
-                <span id="resId" class="text-gold-accent tracking-[0.3em] text-xs uppercase font-bold">TYPE: CCIT</span>
-                <h2 id="resTitle" class="font-serif text-3xl md:text-4xl font-bold mt-2"></h2>
-            </div>
-
-            <section class="mb-16">
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="font-serif italic text-gold-accent text-2xl">01.</span>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">総評</h2>
-                </div>
-                <div class="separator mb-8"></div>
-                <p id="resMain" class="text-lg md:text-xl leading-relaxed text-ivory/90 font-light first-letter:text-4xl first-letter:font-serif first-letter:text-gold-accent first-letter:mr-1"></p>
-            </section>
-
-            <section class="mb-16">
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="font-serif italic text-gold-accent text-2xl">02.</span>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">生存戦略へのアドバイス</h2>
-                </div>
-                <div class="separator mb-8"></div>
-                <div class="bg-black/20 p-8 rounded-2xl border-l-4 border-bronze-accent">
-                    <p id="resAdvice" class="text-base md:text-lg leading-relaxed text-ivory/80 italic"></p>
-                </div>
-            </section>
-
-            <section class="mb-16">
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="font-serif italic text-gold-accent text-2xl">03.</span>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">私生活に透ける特徴</h2>
-                </div>
-                <div class="separator mb-8"></div>
-                <ul id="resHenken" class="space-y-6"></ul>
-            </section>
-
-            <section>
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="font-serif italic text-gold-accent text-2xl">04.</span>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">相性の良いタイプ</h2>
-                </div>
-                <div class="separator mb-8"></div>
-                <div class="compat-card rounded-2xl p-6 md:p-8 flex items-center gap-6">
-                    <div class="compat-thumb">
-                        <img id="compatImage" src="" alt="Compatible Type">
-                    </div>
-                    <div class="flex-1">
-                        <span id="compatId" class="text-gold-accent tracking-[0.2em] text-xs uppercase font-bold">TYPE: CCIT</span>
-                        <h3 id="compatTitle" class="font-serif text-xl md:text-2xl font-bold mt-1 mb-3"></h3>
-                        <p id="compatReason" class="text-sm md:text-base leading-relaxed text-ivory/80"></p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="mt-16">
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="font-serif italic text-gold-accent text-2xl">05.</span>
-                    <h2 class="font-serif text-2xl md:text-3xl font-bold tracking-wide">数値的根拠</h2>
-                </div>
-                <div class="separator mb-8"></div>
-                <div id="axisGauges"></div>
-            </section>
-
-            <div class="mt-16 pt-8 border-t border-white/5 text-center">
-                <button onclick="location.reload()" class="text-gold-accent text-xs tracking-[0.3em] hover:opacity-100 opacity-50 transition-opacity uppercase font-bold">Restart Profiling</button>
-            </div>
-        </main>
     </div>
 
-    <!-- 質問プールは questions.js を参照（同じディレクトリに配置すること） -->
-    <script src="questions.js"></script>
-
-    <script>
-        // ------------------------------------------------------------
-        // 質問のランダム抽出
-        // questions.js の questionPool から、軸ごとに4問ずつ（計16問）
-        // をランダムに選び出し、全体もシャッフルしてクイズを構成する。
-        // ------------------------------------------------------------
-        function shuffleArray(arr) {
-            const a = arr.slice();
-            for (let i = a.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [a[i], a[j]] = [a[j], a[i]];
-            }
-            return a;
-        }
-
-        function buildQuestionSet() {
-            const perAxis = 4;
-            let selected = [];
-
-            Object.values(questionPool).forEach(axis => {
-                const shuffledTexts = shuffleArray(axis.questions);
-                const picked = shuffledTexts.slice(0, perAxis).map(text => ({
-                    text: text,
-                    aKey: axis.aKey,
-                    bKey: axis.bKey
-                }));
-                selected = selected.concat(picked);
-            });
-
-            return shuffleArray(selected);
-        }
-
-        const questions = buildQuestionSet();
-
-        const typeImageMap = {
-            CCIT: "1.jpg", CCIF: "2.jpg", CCOT: "3.jpg", CCOF: "4.jpg",
-            CLIT: "5.jpg", CLIF: "6.jpg", CLOT: "7.jpg", CLOF: "8.jpg",
-            ACIT: "9.jpg", ACIF: "10.jpg", ACOT: "11.jpg", ACOF: "12.jpg",
-            ALIT: "13.jpg", ALIF: "14.jpg", ALOT: "15.jpg", ALOF: "16.jpg"
-        };
-
-       const results = {
-            CCIT: { 
-                title: "規律の独房番", 
-                main: "スプーンを持つ角度、口に運ぶ順番、噛む回数。すべてが脳内で事前に儀式化されており、そこから一ミリでも逸脱すると世界の秩序が崩壊すると本気で思っている。あなたにとってカレーは食事ではなく、毎回同じ手順を反復するための「儀式」に過ぎない。新しいメニューの誘惑よりも、いつもの手順を守り抜くことの方が、あなたにとっては百倍重要だ。その几帳面さは美徳ではなく、変化を受け入れる勇気がないことへの言い訳である。あなたの人生に「即興」という文字が刻まれる日は、来ない。", 
-                advice: "一度でいいから、手順を無視して真ん中からスプーンを入れてみろ。世界は崩壊しない。むしろ、あなたが恐れているのは崩壊そのものではなく、崩壊しても誰も気にしないという事実に気づくことだ。儀式を手放せ、さもなくば一生同じ皿の中でループし続けることになる。", 
-                henken: [
-                    "冷蔵庫の中身を賞味期限順に並べ替えないと、食材を取り出す前に軽い眩暈を覚える。",
-                    "エレベーターに乗る位置が毎回同じで、他人にそこを先取りされると、その日一日の機嫌が損なわれる。",
-                    "歯磨きの順番（奥歯から前歯へ）を10年以上変えたことがなく、変えろと言われると本気で動揺する。",
-                    "テレビのリモコンのボタンは指定の位置に戻さないと気が済まず、家族が置き場所を変えると密かに戻しに行く。",
-                    "毎朝同じ時間に同じ駅の同じ車両に乗るため、電車が1本遅れただけでその日の予定が全て崩壊したように感じる。"
-                ],
-                compat: { type: "CCIF", reason: "互いの手順に一切口を出さない、恐ろしく静かな共存関係が築ける。二人の間に会話は少ないが、それぞれの儀式が邪魔されない限り、争いも起きない。" }
-            },
-            CCIF: { 
-                title: "臆病な安牌主義者", 
-                main: "会計の瞬間だけ人格が変わり、頼んでもいないレシートの内訳を三度読み返す。あなたにとってカレーの味よりも重要なのは「損をしていないか」という強迫観念だ。ドリンクバーを頼むかどうかで本気で悩み、結局頼まずに水を三杯おかわりして帳尻を合わせる。その慎重さは倹約ではなく、自分の選択に自信が持てない人間の逃げ道に過ぎない。あなたは一生、値札という他人の基準でしか自分の欲望を測れないだろう。", 
-                advice: "値段を見る前に、まず食べたいものを頭に思い浮かべろ。損得勘定はその後でいい。あなたが本当に恐れているのは出費ではなく、自分の欲望に正直になった時に見える、みすぼらしい自分自身の姿だ。", 
-                henken: [
-                    "スーパーのタイムセールの時間を把握しており、それに合わせて夕食の時間を毎日調整している。",
-                    "友人との割り勘で1円単位の端数が出ると、細かい計算を始めて場の空気を凍りつかせる。",
-                    "クーポンの有効期限が切れる前日になると、使う予定のない店にまで無理やり足を運ぶ。",
-                    "ネット通販でカートに入れた商品を、送料無料になる金額まで悩み抜いた末に結局買わずに閉じる。",
-                    "誰かに奢ってもらった時だけ異様にテンションが上がり、その日のことを何年も語り継ぐ。"
-                ],
-                compat: { type: "CCIT", reason: "お互いに自分の殻から出ようとしないので、衝突が起きようがない。二人でいても会計を割り勘にする瞬間だけは、驚くほど息が合う。" }
-            },
-            CCOT: { 
-                title: "教条的なコストカッター", 
-                main: "頼んでもいないのに「タンパク質量」や「GI値」を語り出す、自称・食の専門家。あなたの講釈は科学的根拠のように聞こえるが、実際はネットで拾った断片的な知識の寄せ集めに過ぎない。他人が頼んだメニューに「それ栄養バランス最悪だよ」と口を挟むその瞬間、相手の食欲だけでなく、あなたへの好感度も同時に消滅していることに気づいていない。理屈で武装している間に、目の前のルーは無情にも冷めていく。あなたの言葉は栄養にも会話の潤滑油にもならない、ただの雑音だ。", 
-                advice: "黙って食え。あなたが披露する知識は誰も求めていない。まずは自分の皿だけを見つめ、他人の選択に口を出す権利など最初から持っていなかったことを理解しろ。", 
-                henken: [
-                    "職場の休憩室で同僚のコンビニ弁当に対し、頼まれてもいないカロリー計算を披露して場を沈黙させる。",
-                    "健康診断の結果が良かった年だけ、その話を初対面の人にまで延々と語り続ける。",
-                    "サプリメントの成分表を暗記しており、雑談中に急にそれを暗唱し始めて相手を困惑させる。",
-                    "ジムに通っているという事実だけを武器に、運動不足の人間全員を心の中で見下している。",
-                    "外食のたびにアプリでカロリーを記録し、数字が悪いとその日一日中不機嫌になる。"
-                ],
-                compat: { type: "ACIT", reason: "理屈と数字でしか愛情表現ができない者同士。デートの会話の8割が栄養素とデータの引用で埋まるが、それが二人にとっての「深い会話」になる。" }
-            },
-            CCOF: { 
-                title: "意志なきカメレオン", 
-                main: "同席者が頼んだメニューを見てから、自分の注文を決める。あなたの人生の選択は常に「多数派」か「一番声が大きい人」の後追いであり、自分自身の欲望というものが存在しない。トッピングを聞かれても「みんなと同じで」としか答えられないその姿は、自由という名の重荷から逃げ続けてきた結果だ。あなたの輪郭は、他人の選択の影でしか形作られない。自分の意志でカレーを一皿選べない人間に、人生の舵を握ることなどできるはずがない。", 
-                advice: "誰にも聞かず、メニューを開いて3秒で決めろ。それが不味くても、失敗でもいい。自分で選んだという事実だけが、あなたに背骨を与える唯一の方法だ。", 
-                henken: [
-                    "職場の飲み会で幹事が決めた店に一度も異論を唱えたことがなく、内心の不満は誰にも共有されない。",
-                    "髪型を美容師に「お任せで」としか言えず、仕上がりが気に入らなくても笑顔で会計を済ませる。",
-                    "グループチャットで多数決が取られると、自分の本音がどちらだったかすら忘れてしまう。",
-                    "映画の感想を聞かれる前に、周囲の反応を確認してから自分の感想の温度を調整する。",
-                    "上司の意見に反射的に頷いてしまい、後で一人になってから初めて自分の本当の考えに気づく。"
-                ],
-                compat: { type: "ALOT", reason: "自分では何一つ決められないあなたにとって、強引に決めてくれる相手はむしろ救世主だ。注文から休日の予定まで丸投げできる、極めて楽な依存関係が成立する。" }
-            },
-            CLIT: { 
-                title: "冷徹な合理的貴族", 
-                main: "誰にも聞かれていないのに「これ限定トッピングだから」と、値段の高さをさりげなく匂わせる。あなたにとって注文とは、味を楽しむ行為ではなく、自分の経済的余裕を無言でアピールするパフォーマンスだ。安いメニューを頼む人を見て、口には出さずとも心の中で一段下に見ている、その傲慢さがあなたの本性である。高いトッピングを積み上げることでしか自分の価値を確認できないその姿は、豊かさではなく貧しさの証明に他ならない。", 
-                advice: "値段の話を一切せずに一食を終えてみろ。あなたがどれだけ「語らずに伝える」ことに依存しているか、その沈黙の中で初めて分かるはずだ。", 
-                henken: [
-                    "友人の前でだけ、さりげなく高級ブランドの財布を見えるように置く。誰も気づかなくても満足そうにしている。",
-                    "旅行の話をする時、行き先よりも先に宿泊したホテルのグレードを説明し始める。",
-                    "初対面の人との会話で、自然な流れを装って自分の職業や年収を匂わせる話題に誘導する。",
-                    "高そうに見えるだけの安物を身につけ、誰かに褒められると訂正せずにニヤつく。",
-                    "レストランで会計を必ず自分がさりげなく持ち、その恩着せがましさを一切自覚していない。"
-                ],
-                compat: { type: "ALIT", reason: "互いの見栄を見破りながらも、決して指摘しないという暗黙の紳士協定が成立する相手。値段の話をしないふりをしながら、二人とも内心では値踏みし合っている。" }
-            },
-            CLIF: { 
-                title: "刹那主義のギャンブラー", 
-                main: "会計の直前まで自分がいくら使ったか把握しておらず、レジで金額を聞いて一瞬フリーズする。その場のテンションでトッピングを次々と追加し、後になって「そんなに頼んだっけ」と本気で驚く記憶力の欠如がある。あなたにとって未来の自分は他人であり、今この瞬間の欲望を満たすためなら平気で借金をする。翌日の自分がどれだけ困っても、今のあなたには関係のないことなのだ。", 
-                advice: "会計前に一度、頭の中で足し算をする癖をつけろ。その数秒の我慢が、来月のあなたを地獄から救う唯一の手段だ。", 
-                henken: [
-                    "給料日の前日になると、財布の中身を数える前に「なんとかなる」と唱えて現実から目を逸らす。",
-                    "セール品を見ると必要のないものまでカゴに入れ、レジで初めて総額に驚いて青ざめる。",
-                    "サブスクリプションの契約数を把握しておらず、通帳を見て初めて存在を思い出すサービスがいくつもある。",
-                    "友人との飲み会で気が大きくなり、頼んでもいないのに全員分を奢ると宣言してしまう癖がある。",
-                    "月末になると急に「自炊生活」を始めるが、それは節約ではなく単なる資金切れの結果である。"
-                ],
-                compat: { type: "ALOF", reason: "計画性のかけらもない者同士、財布の中身を確認せずに突き進む最強にして最悪の組み合わせ。沈む船に二人で乗るなら、少なくとも孤独ではないという慰めだけがある。" }
-            },
-            CLOT: { 
-                title: "承認欲求の化け物", 
-                main: "料理が来た瞬間、まず皿の角度を調整し、照明の反射を確認してから食べ始める。あなたにとってカレーの味は二の次であり、本当の目的は「映える一枚」を撮ることだ。写真を撮り終えた後の食事は、もはや惰性で口に運ぶだけの作業に成り下がる。他人が同じ構図で撮っていると、無言の対抗心を燃やし、より完璧な一枚のために何度もシャッターを切る。食べ物への敬意より、いいねの数の方があなたには重要なのだ。", 
-                advice: "スマホを鞄の奥にしまい、写真なしで一食を終えてみろ。誰にも見せない食事にも価値があると気づいた時、初めてあなたは自分の舌で味を確かめられるようになる。", 
-                henken: [
-                    "旅行先では景色よりも先に「映えるカフェ」を検索し、行程をすべてそれ中心に組み立てる。",
-                    "誕生日の投稿への反応が少ないと、深夜にこっそり削除して数時間後に投稿し直す。",
-                    "服を買う基準が「写真映えするか」であり、実際の着心地は二の次になっている。",
-                    "友人の結婚式で新郎新婦よりも自分の写り具合を気にして、何度も同じ角度で撮り直しを頼む。",
-                    "SNSの投稿の「いいね」の数を見てから、その日の自己肯定感が上下する。"
-                ],
-                compat: { type: "ACOT", reason: "あなたが撮影に没頭している間、相手が延々と講釈を垂れてくれるので、誰も本当の会話をしなくて済むという奇妙な安定が生まれる。" }
-            },
-            CLOF: { 
-                title: "破滅型パリピ", 
-                main: "「今日は無礼講で」の一言を免罪符に、注文から会話まですべてを台無しにする社会的災害。ノリでトッピングを山盛りにし、最後は「多すぎた」と悪びれもせず残す、食べ物への敬意ゼロの人間だ。あなたの声量と勢いに周囲は毎回振り回され、静かに疲弊している。テンションだけで生きているその姿は自由に見えて、実際は自分の感情を制御できないだけの未熟さの表れである。", 
-                advice: "一度、声のボリュームを半分に落として食事をしてみろ。周囲があなたの「ノリ」に付き合っているだけで、心から楽しんでいるわけではないという事実に気づくはずだ。", 
-                henken: [
-                    "居酒屋で大声で店員を呼びつけ、注意されると「盛り上がってただけ」と悪びれずに開き直る。",
-                    "カラオケで自分の順番でないマイクまで奪い、周囲が引いていることに気づかない。",
-                    "友人の家に泊まった翌朝、散らかした痕跡を片付けずに「ありがとう〜」と言って去っていく。",
-                    "初対面の人にもタメ口で接し、それを「距離感が近い証拠」だと本気で思っている。",
-                    "終電を逃した時だけ急に真面目になり、翌日は何事もなかったかのように同じ過ちを繰り返す。"
-                ],
-                compat: { type: "ACOF", reason: "ノリの暴走に誰もブレーキをかけないので、二人でいる限り互いに迷惑をかけ合わない。被害は常に周囲の店員に集中する。" }
-            },
-            ACIT: { 
-                title: "陰湿なデータマイナー", 
-                main: "料理が運ばれてくる前から、盛り付けの写真と実物を脳内で照合する準備を整えている。あなたにとって食事は楽しむものではなく、粗を見つけて優越感に浸るための審査対象だ。一口食べるより先に「ここが数ミリずれている」と指摘し、その細かさを繊細さだと勘違いしている。素直に「美味しい」と言えないその性格こそが、あなたの人生から多くの喜びを奪ってきた元凶である。", 
-                advice: "一度、粗を探すのをやめて、ただ美味いかどうかだけを感じてみろ。あなたの舌はとうの昔に、批評という名の色眼鏡でしか物を見られなくなっている。", 
-                henken: [
-                    "ネット通販で届いた商品の梱包の傷を見つけるたびに、長文のクレームメールを送る使命感に燃える。",
-                    "友人が勧めてきた映画や本に対し、まず粗探しから入り、良かった点は最後に付け足し程度で語る。",
-                    "レストランのレビューを書く前に、あら探しのために普段より厳しい目でメニューを注文する。",
-                    "他人の些細な言い間違いを逃さず指摘し、それを「正義感」だと本気で思い込んでいる。",
-                    "自分が褒められると素直に喜べず、まず「でもここは改善点が」と自己批判から入ってしまう。"
-                ],
-                compat: { type: "CCOT", reason: "理屈と粗探しでしか会話が成立しない者同士。デート中でも互いの発言の矛盾を指摘し合うが、それすらも二人にとっては「知的な交流」として成立してしまう。" }
-            },
-            ACIF: { 
-                title: "迷走する遭難者", 
-                main: "誰も頼まないような組み合わせを選び、「これが分かる人にしか分からない」と一人で悦に浸る味覚の迷子。本当は美味しくないと薄々気づいているのに、後に引けないプライドのために「これは新しい発見だ」と強がる姿は、見ていて哀れですらある。あなたの「独自の視点」は、実際には基礎を学ぶ努力を怠った人間の言い訳に過ぎない。", 
-                advice: "一度、基本に立ち返れ。誰もが美味いと言うものを、素直に美味いと言えるようになってから、初めて自分の好みを語る資格が生まれる。奇をてらう前に、型を知れ。", 
-                henken: [
-                    "誰も聞いたことのないアーティストの名前を出し、相手が知らないことを確認して優越感に浸る。",
-                    "部屋のインテリアに強いこだわりを持つが、実用性を完全に無視しているため生活動線が破綻している。",
-                    "会話に説明なしのカタカナ用語を多用し、相手が困惑するのを見て「感性が合わない」と一人で結論づける。",
-                    "カフェで一番聞き慣れない名前のドリンクを頼み、味の感想を求められると曖昧に誤魔化す。",
-                    "流行りものを人より先に見つけることに執着するが、実際にそれを楽しめているかは怪しい。"
-                ],
-                compat: { type: "ALIF", reason: "誰にも理解されない独自路線を、唯一「わかるよ」と頷き合える相手。二人の間では珍妙な組み合わせも立派なセンスとして成立してしまう。" }
-            },
-            ACOT: { 
-                title: "誇大妄想の語り部", 
-                main: "頼んでもいないのに、店の経営戦略やメニュー開発の裏側を延々と語り出す自称・食のジャーナリスト。あなたの知識は表面的なもので、周囲の関心を完全に無視して一方的に喋り続けるその姿勢が、場の空気を確実に凍らせている。理屈を並べている間にルーは冷め、揚げ物はふやける。あなたが本当に語るべきは戦略ではなく、今目の前にある一皿の温度だ。", 
-                advice: "まず黙って一口食べろ。語る前に感じることを覚えない限り、あなたの言葉は誰の腹の足しにもならない、ただの空虚な音の羅列で終わる。", 
-                henken: [
-                    "会議で「本質的には」「そもそも論として」を多用し、実際には何の結論も出さずに時間だけを消費する。",
-                    "自己啓発本の内容を暗記し、実践しないまま他人に説教することでその日の自尊心を保っている。",
-                    "スポーツ観戦中、選手や監督の采配に対して延々と持論を展開し、周囲を無言にさせる。",
-                    "他人の成功を「運が良かっただけ」と分析し、自分が行動しない理由を正当化し続けている。",
-                    "居酒屋の店員に的外れな改善案を熱弁し、相手の困った顔に気づかず満足げに帰っていく。"
-                ],
-                compat: { type: "CLOT", reason: "相手が撮影に夢中で話を聞いていないため、あなたの長広舌は誰にも遮られずに続けられる。奇妙だが、この一方通行こそが二人にとっての平和である。" }
-            },
-            ACOF: { 
-                title: "情緒不安定な台風", 
-                main: "注文するその瞬間まで、本人ですら何を頼むか分かっていない予測不能な存在。気分次第で辛さもトッピングも二転三転し、決断するまでに周囲を長々と待たせておきながら悪びれる様子もない。あなたの情緒の波は、そのまま皿の上に無秩序として表現されている。まずは自分の気分に振り回されず、一つのことを最後まで貫く経験を積むべきだ。", 
-                advice: "メニューを開いたら30秒以内に決めろ。決断を先延ばしにするその癖が、あなたの人生全体を少しずつ、しかし確実に停滞させていることに気づけ。", 
-                henken: [
-                    "深夜に思い立って部屋の模様替えを始め、朝には力尽きて余計に散らかった空間で眠りにつく。",
-                    "SNSのプロフィール写真を頻繁に変え、友人に「誰だか分からない」と言われることに謎の満足感を覚える。",
-                    "恋人への態度が数時間単位で「溺愛」と「無関心」を行き来し、相手を疲弊させている自覚がない。",
-                    "買い物カゴいっぱいに商品を入れた後、レジ前で急に虚無感に襲われ、そのまま棚に戻さず店を出る。",
-                    "映画館で上映が始まった直後に「やっぱり違う気分だ」と思い始め、最後まで座っているのが苦痛になる。"
-                ],
-                compat: { type: "CLOF", reason: "気分の乱高下を誰も咎めず、むしろ一緒に乗っかってくれる相手。予定はいつも直前で変わるが、それを自由だと笑い合える稀有な相性を持つ。" }
-            },
-            ALIT: { 
-                title: "計算高い成金", 
-                main: "あえて割高な組み合わせを選び、それを平然と完食することで自分の財力を周囲に見せつける策士。庶民的な店であえて「格」を演出しようとするその姿は、見る者にとってはただの滑稽な光景でしかない。あなたがトッピングを積むのは美味しいからではなく、値札を見て高いという理由だけだ。その透けて見える虚栄心が、周囲との距離を静かに広げている。", 
-                advice: "値段を見ずに、純粋に食べたいものを選んでみろ。あなたのプライドが、たかだか数千円のカレーの上にしか成立しないほど薄っぺらいものなのか、その時初めて分かるはずだ。", 
-                henken: [
-                    "少額の会計でも必ず領収書を要求し、使い道のないレシートで財布を膨らませている。",
-                    "高級腕時計を見せるためだけに、不自然な角度でスマホを操作する仕草を繰り返す。",
-                    "自分より立場が下だと判断した相手の名前を、何度会っても覚えようとしない。",
-                    "旅行先のホテルのアメニティを使う予定もないのに全て持ち帰り、洗面所に並べて満足する。",
-                    "「忙しい」を口癖にしているが、実際は予定を埋めることで自分の空虚さから目を逸らしているだけだ。"
-                ],
-                compat: { type: "CLIT", reason: "互いの見栄を見破りながらも指摘しない、暗黙の紳士協定が成立する相手。値段の話をしないふりをしながら、二人とも内心では値踏みし合っている。" }
-            },
-            ALIF: { 
-                title: "色彩を失った芸術家", 
-                main: "カレーを表現の場だと思い込み、調和を無視したトッピングを重ねては「これが芸術だ」と一人で酔いしれる。あなたの独自性は単なる無秩序であり、他人の味覚への配慮を完全に欠いたものだ。周囲が困惑していることにすら気づかず、「理解されないのは仕方ない」と勝手に悲劇の主人公を演じている。あなたの人生の結末も、そのぐちゃぐちゃの皿のように誰にも受け入れられないものになるだろう。", 
-                advice: "混ぜるのをやめろ。まずは一つ一つの素材の味を、余計な自己表現を挟まずに味わってみろ。あなたに必要なのは創造性の追加ではなく、最低限の秩序の獲得だ。", 
-                henken: [
-                    "説明のつかない抽象画を部屋に飾り、来客があるたびにその意味を長々と語り出す。",
-                    "他人の作品を「魂が宿っていない」と評するが、自分の作品も誰の心にも響いていない事実には気づかない。",
-                    "雨の日にあえて傘を差さず、濡れる自分を悲劇の主人公として脳内で演出している。",
-                    "会話の途中で突然黙り込み、後で「今、閃きが降りてきていた」と説明する癖がある。",
-                    "普通の食材の組み合わせを「凡庸だ」と切り捨て、自分だけが特別だと思い込んでいる。"
-                ],
-                compat: { type: "ACIF", reason: "誰にも理解されない独自路線を、唯一「わかるよ」と頷き合える相手。二人の間では珍妙な組み合わせも立派な芸術として成立してしまう。" }
-            },
-            ALOT: { 
-                title: "集団催眠の主導者", 
-                main: "自分が頼んだ変わり種を「一口食べてみて、絶対ハマるから」と強引に他人へ勧める、共感の押し売り魔。あなたの「美味しい」は他人にとって単なる苦行でしかないことに、一生気づく気配がない。相手の愛想笑いを本物の称賛だと受け取り、満足げに次の一口を勧め続けるその鈍感さは、もはや才能の域に達している。あなたが親切のつもりで差し出す一口が、誰かの自由と食欲を静かに奪っている。", 
-                advice: "自分の感動を他人と共有しなければならないという強迫観念を手放せ。幸福は押し付けるものではなく、一人で静かに噛み締めるものだ。", 
-                henken: [
-                    "感動した本や映画を強引に貸しつけ、数日後に感想を尋問のように詰め寄る。",
-                    "飲み会で無理やり場を盛り上げようとし、周囲の冷めた反応に気づかず一人で満足している。",
-                    "他人の悩み相談を、いつの間にか自分の武勇伝にすり替えて自己完結してしまう。",
-                    "お土産にセンスの合わない品を選び、相手の困惑を「照れている」と都合よく解釈する。",
-                    "集合写真では必ず自分が中心に写ろうとし、自分さえ可愛く写っていれば即座に投稿する。"
-                ],
-                compat: { type: "CCOF", reason: "自分では何も決められない相手にとって、あなたの強引な提案はむしろ救いになる。注文から休日の予定まで押し付け放題の、理想的な依存関係が成立する。" }
-            },
-            ALOF: { 
-                title: "完全なるカオス", 
-                main: "理性も予算も味の調和も、すべてをかなぐり捨てて、その場のテンションだけで生きている手のつけられない存在。トッピングを限界まで積み上げ、会計が跳ね上がってもヘラヘラ笑っているその姿は、自由ではなく単なる無計画の極致だ。店員には都合の良い客と思われ、同席者には「一緒にいると恥ずかしい」と密かに距離を置かれている。あなたはその皿と同じように、一生方向性のない混沌の中をさまよい続けるだろう。", 
-                advice: "一度だけでいい、何も追加せずにプレーンな一皿を選んでみろ。その物足りなさこそが、あなたがこれまでトッピングで埋めようとしてきた空白の正体だ。", 
-                henken: [
-                    "スマホの画面が割れていても気にせず、破片が指に刺さりながらタップし続ける。",
-                    "部屋の床が見えないほど物が散乱しており、それを「独自の生態系」と冗談めかして正当化している。",
-                    "「なんとかなる」を人生の座右の銘にしているが、実際は周囲がその尻拭いをしているだけだ。",
-                    "財布を持たずに外出し、友人に借りた金を翌日には綺麗さっぱり忘れる特殊技能を持つ。",
-                    "居酒屋で「とりあえず生」と頼んだ後、グラスを置かずに一気に飲み干し、それを豪快さだと勘違いしている。"
-                ],
-                compat: { type: "CLIF", reason: "計画性のかけらもない者同士、財布の中身を確認せずに突き進む最強にして最悪の組み合わせ。沈む船に二人で乗るなら、少なくとも孤独ではないという慰めだけがある。" }
-            }
-        };
-        // 軸ごとの表示ラベル（ゲージ表示用）
-        const axisLabels = {
-            C1: "保守", A1: "逸脱",
-            C2: "倹約", L2: "浪費",
-            I:  "内省", O:  "外向",
-            T:  "計画", F:  "衝動"
-        };
-        const axisPairs = [
-            ["C1", "A1"],
-            ["C2", "L2"],
-            ["I", "O"],
-            ["T", "F"]
-        ];
-
-        // レアタイプ（極端回答）の判定
-        function getLegendaryTitle(answerList) {
-            const allOne = answerList.every(a => a.value === 1);
-            const allFive = answerList.every(a => a.value === 5);
-            const allExtreme = answerList.every(a => a.value === 1 || a.value === 5);
-
-            if (allOne) {
-                return { title: "伝説級のこだわり修道士", desc: "16問すべてに全力で「1」を叩きつけた、稀代の頑固者。" };
-            }
-            if (allFive) {
-                return { title: "伝説級のカレー馬鹿", desc: "16問すべてに全力で「5」を叩きつけた、稀代の享楽主義者。" };
-            }
-            if (allExtreme) {
-                return { title: "振り切れた二面性の持ち主", desc: "中間を一切選ばず、極端から極端へ跳び続けた稀有な存在。" };
-            }
-            return null;
-        }
-
-        let currentIdx = 0;
-        let answers = [];
-
-        function handleAnswer(value) {
-            answers.push({ q: questions[currentIdx], value: value });
-            currentIdx++;
-            updateUI();
-        }
-
-        function updateUI() {
-            const progress = (currentIdx / questions.length) * 100;
-            document.getElementById("progressBar").style.width = progress + "%";
-
-            const qText = document.getElementById("qText");
-            if (currentIdx < questions.length) {
-                qText.classList.remove("animate-reveal");
-                void qText.offsetWidth; 
-                qText.classList.add("animate-reveal");
-                
-                qText.textContent = questions[currentIdx].text;
-                document.getElementById("qNum").textContent = `Analysis: ${String(currentIdx + 1).padStart(2, '0')} / ${questions.length}`;
-            } else {
-                showResult();
-            }
-        }
-
-        function showResult() {
-            document.getElementById("quizArea").classList.add("hidden");
-            document.getElementById("progressContainer").classList.add("hidden");
-            document.getElementById("resultArea").classList.remove("hidden");
-
-            // 各軸のスコアをリセット（同点回避の微小乱数を付与）
-            const scores = { 
-                C1: Math.random() * 0.01, A1: 0, 
-                C2: Math.random() * 0.01, L2: 0, 
-                I:  Math.random() * 0.01, O:  0, 
-                T:  Math.random() * 0.01, F:  0 
-            };
-
-            answers.forEach(ans => {
-                const weight = ans.value - 3; 
-                if (weight < 0) {
-                    scores[ans.q.aKey] += Math.abs(weight);
-                } else if (weight > 0) {
-                    scores[ans.q.bKey] += weight;
-                }
-            });
-
-            // 最終タイプの判定
-            const finalType = [
-                scores.C1 >= scores.A1 ? "C" : "A",
-                scores.C2 >= scores.L2 ? "C" : "L",
-                scores.I >= scores.O ? "I" : "O",
-                scores.T >= scores.F ? "T" : "F"
-            ].join("");
-
-            const data = results[finalType] || results.CCIT;
-            
-            // 画像の表示（16:9ワイド表示対応 / .jpg固定）
-            const imgElement = document.getElementById("resImage");
-            const imageFile = typeImageMap[finalType] || "1.jpg";
-            imgElement.src = imageFile.replace('.png', '.jpg');
-
-            document.getElementById("resId").textContent = `TYPE: ${finalType}`;
-            document.getElementById("resTitle").textContent = data.title;
-            document.getElementById("resMain").textContent = data.main;
-            document.getElementById("resAdvice").textContent = data.advice;
-            document.getElementById("resHenken").innerHTML = data.henken.map(h => `
-                <li class="relative ml-6 text-base md:text-lg text-ivory/90 list-item-bullet hover:text-gold-accent transition-colors duration-300">
-                    ${h}
-                </li>
-            `).join("");
-
-            // 相性の良いタイプの表示
-            const compat = data.compat;
-            if (compat) {
-                const compatType = compat.type;
-                const compatData = results[compatType] || results.CCIT;
-                const compatImageFile = (typeImageMap[compatType] || "1.jpg").replace('.png', '.jpg');
-                document.getElementById("compatImage").src = compatImageFile;
-                document.getElementById("compatId").textContent = `TYPE: ${compatType}`;
-                document.getElementById("compatTitle").textContent = compatData.title;
-                document.getElementById("compatReason").textContent = compat.reason;
-            }
-
-            // 軸ごとのスコアをゲージで可視化
-            const gaugesHtml = axisPairs.map(([aKey, bKey]) => {
-                const aScore = scores[aKey];
-                const bScore = scores[bKey];
-                const total = aScore + bScore;
-                const aPct = total > 0 ? Math.round((aScore / total) * 100) : 50;
-                const bPct = 100 - aPct;
-                return `
-                    <div class="gauge-row">
-                        <div class="gauge-labels">
-                            <span class="${aPct >= bPct ? 'text-gold-accent font-bold' : ''}">${axisLabels[aKey]} ${aPct}%</span>
-                            <span class="${bPct > aPct ? 'text-gold-accent font-bold' : ''}">${axisLabels[bKey]} ${bPct}%</span>
-                        </div>
-                        <div class="gauge-track">
-                            <div class="gauge-fill" style="width: ${aPct}%"></div>
-                        </div>
-                    </div>
-                `;
-            }).join("");
-            document.getElementById("axisGauges").innerHTML = gaugesHtml;
-
-            // レアタイプ（極端回答）の演出
-            const legendary = getLegendaryTitle(answers);
-            const badgeEl = document.getElementById("legendaryBadge");
-            const resultMain = document.getElementById("resultArea");
-            if (legendary) {
-                document.getElementById("legendaryText").textContent = `称号：${legendary.title}`;
-                badgeEl.classList.remove("hidden");
-                badgeEl.classList.add("flex");
-                resultMain.classList.add("legendary-frame");
-            } else {
-                badgeEl.classList.add("hidden");
-                badgeEl.classList.remove("flex");
-                resultMain.classList.remove("legendary-frame");
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        updateUI();
-    </script>
 </body>
 </html>
