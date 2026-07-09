@@ -118,7 +118,7 @@
 
             <div class="mt-14 pt-8 border-t border-white/5 text-center">
                 <button onclick="shareCurrentResult()" class="inline-flex items-center gap-2 text-gold-accent text-xs tracking-[0.3em] hover:opacity-100 opacity-80 transition-opacity uppercase font-bold border border-gold-accent/40 rounded-full px-5 py-2 mr-3 mb-3">
-                    結果をシェア
+                    Xでシェア
                 </button>
                 <button onclick="location.reload()" class="text-gold-accent text-xs tracking-[0.3em] hover:opacity-100 opacity-50 transition-opacity uppercase font-bold">もう一度占う</button>
                 <div class="mt-6">
@@ -275,17 +275,8 @@
             const shareText = `今日の気分トッピング占い（${moodLabel}）の結果は「${topping}」でした。`;
             const shareUrl = location.href;
 
-            if (navigator.share) {
-                navigator.share({ title: "今日の気分トッピング占い", text: shareText, url: shareUrl }).catch(() => {});
-            } else if (navigator.clipboard) {
-                navigator.clipboard.writeText(`${shareText} ${shareUrl}`).then(() => {
-                    alert("結果をコピーしました。SNSやトークに貼り付けてシェアできます。");
-                }).catch(() => {
-                    alert(shareText);
-                });
-            } else {
-                alert(shareText);
-            }
+            const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+            window.open(intentUrl, "_blank");
         }
 
         function renderQuestion() {
