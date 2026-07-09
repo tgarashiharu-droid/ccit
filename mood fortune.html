@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日の気分トッピング占い</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=Noto+Sans+JP:wght@300;400;700&family=Playfair+Display:ital,wght@0,900;1,700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ebony': '#0a0c10',
+                        'charcoal': '#1a1d23',
+                        'gold-accent': '#c5a059',
+                        'bronze-accent': '#8e6d45',
+                        'ivory': '#f2f0e9',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', '"Lora"', 'serif'],
+                        sans: ['"Noto Sans JP"', '"Open Sans"', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0c10;
+            color: #f2f0e9;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(197, 160, 89, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(74, 59, 77, 0.05) 0px, transparent 50%);
+        }
+        .glass-panel {
+            background: rgba(26, 29, 35, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #f2f0e9 0%, #c5a059 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.4), transparent);
+        }
+        .hidden { display: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-reveal { animation: fadeIn 0.8s ease forwards; }
+        .progress-bar {
+            height: 2px;
+            background: #c5a059;
+            transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .mood-btn {
+            transition: all 0.2s ease;
+        }
+        .mood-btn:hover {
+            border-color: #c5a059;
+            background: rgba(197, 160, 89, 0.08);
+            transform: translateY(-2px);
+        }
+        .tag-pill {
+            display: inline-block;
+            border: 1px solid rgba(197, 160, 89, 0.35);
+            color: rgba(242, 240, 233, 0.7);
+            font-size: 0.7rem;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            margin: 0 0.25rem 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans selection:bg-gold-accent/30">
+
+    <div class="max-w-2xl mx-auto px-6 py-16 md:py-28">
+
+        <header class="text-center mb-14">
+            <span class="text-gold-accent tracking-[0.4em] text-xs uppercase font-bold opacity-70">Daily Divination</span>
+            <h1 class="font-serif text-3xl md:text-5xl font-black mt-4 mb-2 tracking-tight">
+                今日の<span class="gradient-text italic">気分トッピング占い</span>
+            </h1>
+            <p class="text-ivory/50 text-sm mt-4">3つの質問に答えるだけ。あなたの今の状態を暴き、ふさわしい一皿を突きつけます。</p>
+            <div id="progressContainer" class="w-24 h-[2px] bg-white/10 mx-auto mt-6 overflow-hidden">
+                <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+            </div>
+        </header>
+
+        <div id="questionArea" class="glass-panel rounded-3xl p-8 md:p-14">
+            <p id="qNum" class="font-serif italic text-gold-accent mb-2 text-sm tracking-widest">QUESTION 01 / 03</p>
+            <h2 id="qText" class="text-xl md:text-2xl font-bold leading-relaxed mb-10 min-h-[70px]"></h2>
+            <div id="optionArea" class="grid grid-cols-1 gap-4"></div>
+        </div>
+
+        <main id="resultArea" class="hidden glass-panel rounded-3xl p-8 md:p-14 animate-reveal">
+            <div class="text-center mb-6">
+                <span class="text-gold-accent tracking-[0.4em] text-xs uppercase font-bold opacity-60">Today's Verdict</span>
+            </div>
+            <div class="text-center mb-6">
+                <span id="tagStamina" class="tag-pill"></span>
+                <span id="tagCompany" class="tag-pill"></span>
+            </div>
+            <div class="text-center mb-10">
+                <span id="resMoodLabel" class="text-gold-accent tracking-[0.2em] text-xs uppercase font-bold"></span>
+                <h2 id="resTopping" class="font-serif text-3xl md:text-4xl font-bold mt-2"></h2>
+            </div>
+            <div class="separator mb-8"></div>
+            <p id="resComment" class="text-lg leading-relaxed text-ivory/90 font-light text-center"></p>
+
+            <div class="mt-14 pt-8 border-t border-white/5 text-center">
+                <button onclick="location.reload()" class="text-gold-accent text-xs tracking-[0.3em] hover:opacity-100 opacity-50 transition-opacity uppercase font-bold">もう一度占う</button>
+            </div>
+        </main>
+
+    </div>
+
+    <script>
+        // ------------------------------------------------------------
+        // 質問フロー（3問）
+        // Q1・Q2は雰囲気付け（結果カードにタグとして表示）、
+        // Q3で最終的な気分カテゴリを決定する。
+        // ------------------------------------------------------------
+        const flow = [
+            {
+                id: "stamina",
+                text: "今日の体力は？",
+                options: ["絶好調", "まあまあ", "限界"]
+            },
+            {
+                id: "company",
+                text: "今、隣にいるのは？",
+                options: ["一人だけ", "気の知れた友人", "気を遣う相手"]
+            },
+            {
+                id: "mood",
+                text: "今の気分に一番近いのは？",
+                options: [
+                    "疲れ果てて、何も考えたくない",
+                    "自分へのご褒美をあげたい",
+                    "とにかく刺激が欲しい",
+                    "誰かに自慢したい気分だ",
+                    "とりあえず安心したい"
+                ]
+            }
+        ];
+
+        const moodKeys = ["fatigue", "reward", "stimulation", "flex", "safe"];
+
+        // 気分ごとの候補（各15種類 = 旧バージョンの5倍のボリューム）。
+        // 毎回ランダムに1つ選ぶことで、同じ気分を選んでも結果が変わる。
+        const moodMap = {
+            fatigue: {
+                label: "疲弊モード",
+                options: [
+                    { topping: "とろとろ煮込みチキン", comment: "頑張るのをやめろ。今日のあなたに必要なのは、噛む力すら奪う柔らかさだ。" },
+                    { topping: "ハーフサイズ・プレーン", comment: "無理をするな。今日は量より、何も足さない静けさがふさわしい。" },
+                    { topping: "温泉卵のせポークカレー", comment: "壊れかけの心には、崩れる黄身くらいがちょうどいい。" },
+                    { topping: "とろけるチーズハンバーグ", comment: "固形物を噛む気力もないなら、せめて溶けるものを選べ。" },
+                    { topping: "甘口ポークカレー・小盛り", comment: "辛さと向き合う気力すらない日は、素直に甘さに逃げていい。" },
+                    { topping: "温野菜のせビーフカレー", comment: "野菜くらいは自分に食べさせてやれ。それが今日の唯一の努力でいい。" },
+                    { topping: "スープカレー風・ライス少なめ", comment: "咀嚼の負担を減らせ。今日のあなたに固形の意志決定は不要だ。" },
+                    { topping: "バターチキン・ハーフ", comment: "バターの脂でコーティングされた心は、少しだけ長持ちする。" },
+                    { topping: "ルーのみポークカレー", comment: "揚げ物を噛む元気がないなら、無理に頼むな。" },
+                    { topping: "卵とじカレー", comment: "何もかもを卵でまとめて、今日という日をなかったことにしろ。" },
+                    { topping: "ミニポークカレー＋味噌汁セット", comment: "量を減らすことは負けではない。撤退も戦略のうちだ。" },
+                    { topping: "とろとろチーズ増し増し", comment: "固形の悩みも、溶かしてしまえば少しは軽くなる。" },
+                    { topping: "具だくさんスープカレー", comment: "咀嚼より嚥下で生きろ。今日はそれでいい。" },
+                    { topping: "ハヤシルー風カレー", comment: "たまには違う甘さに逃げても、誰も咎めない。" },
+                    { topping: "プレーンポークカレー・ぬるめ", comment: "熱さすら今日は刺激過多だ。ぬるさに身を委ねろ。" }
+                ]
+            },
+            reward: {
+                label: "ご褒美モード",
+                options: [
+                    { topping: "ロースカツ＆チーズW", comment: "今日ぐらい財布のことは忘れていい。むしろ忘れろ。" },
+                    { topping: "ハンバーグ＋温泉卵", comment: "頑張った自分を甘やかせ。誰も見ていないところでは尚更だ。" },
+                    { topping: "海老フライ2尾増し", comment: "自分へのご褒美のはずが、他人への見栄になっていないか、少しだけ確認しろ。" },
+                    { topping: "メンチカツ＋チーズ", comment: "罪悪感はレジで一瞬だけ感じて、すぐに忘れる設計にしておけ。" },
+                    { topping: "ロースカツ＋ソーセージ", comment: "頑張った日は、動物性タンパク質を二種類重ねる権利がある。" },
+                    { topping: "エビフライ＋ハンバーグ", comment: "ご褒美とは、迷わず二つ選ぶことだと今日だけは思い込め。" },
+                    { topping: "とろけるチーズ野菜カレー", comment: "罪悪感を野菜で薄めるその小賢しさも、今日は許してやる。" },
+                    { topping: "ダブルロースカツ", comment: "一枚で満足できるほど、今日のあなたは安く済む人間ではない。" },
+                    { topping: "厚切りベーコン＋チーズ", comment: "塩気と脂で、今日の疲れを黙らせろ。" },
+                    { topping: "ハンバーグ＋エビフライ＋チーズ", comment: "全部乗せにする勇気こそが、今日のご褒美の本体だ。" },
+                    { topping: "スペシャルミックスフライ", comment: "迷うくらいなら、全部頼め。今日のあなたはそれだけの働きをした。" },
+                    { topping: "ロースカツ＋温泉卵＋チーズ", comment: "黄身とチーズを両方乗せる贅沢は、今日だけの特別な自己肯定感だ。" },
+                    { topping: "メンチカツ＋ハンバーグ", comment: "揚げ物と挽き肉、両方を今日は自分に許してやれ。" },
+                    { topping: "とろとろチーズポテト添え", comment: "炭水化物にチーズを乗せることの罪深さこそが、ご褒美の証だ。" },
+                    { topping: "スパイシーソーセージ盛り合わせ", comment: "ご褒美とは量ではなく種類の多さで測れ。今日は特別だ。" }
+                ]
+            },
+            stimulation: {
+                label: "刺激モード",
+                options: [
+                    { topping: "辛さレベル8のポークカレー", comment: "その辛さは味覚のためではなく、心の空白を埋めるためだと自覚しろ。" },
+                    { topping: "追い唐辛子＋にんにく増し", comment: "刺激で誤魔化せる感情には限度がある。せめて美味い刺激を選べ。" },
+                    { topping: "エクストラホット＋チーズ", comment: "燃えるような辛さの後に残るのは、結局いつもと同じ静けさだ。" },
+                    { topping: "辛さ10辛＋トッピング全部", comment: "その注文は味覚への挑戦ではなく、周囲への自己主張だ。" },
+                    { topping: "激辛×大盛りライス", comment: "胃を痛めつけることでしか実感できない生を、少し心配した方がいい。" },
+                    { topping: "スパイス追加のキーマカレー", comment: "粒立つ刺激の中に、今日の苛立ちを紛れ込ませろ。" },
+                    { topping: "辛さMAX＋にんにくの芽", comment: "匂いも辛さも気にしない日は、大抵何かから逃げている日だ。" },
+                    { topping: "カイエンペッパー爆盛り", comment: "汗をかくことでしか、今日の感情を発散できないのだろう。" },
+                    { topping: "辛口ビーフカレー＋唐辛子追加", comment: "その一皿は食事ではなく、ちょっとした自傷行為に近い。" },
+                    { topping: "激辛メンチカツカレー", comment: "揚げ物にまで辛さを求める日は、平穏を退屈だと感じている証拠だ。" },
+                    { topping: "辛さ7辛＋エビフライ", comment: "刺激と贅沢を同時に求めるその欲張りさが、今日のあなたらしい。" },
+                    { topping: "トリプル唐辛子カレー", comment: "三段階の辛さを一度に頼む必要はどこにもなかったはずだ。" },
+                    { topping: "スパイシーソーセージ＋辛口ルー", comment: "刺激の重ね掛けは、鈍くなった感覚への最後の悪あがきだ。" },
+                    { topping: "激辛スープカレー風", comment: "飲み込む瞬間の熱さだけが、今日のあなたを現実に引き戻す。" },
+                    { topping: "10辛＋チーズ＋にんにく全部乗せ", comment: "刺激を全部盛りにする発想そのものが、すでに正常な判断力を失っている証拠だ。" }
+                ]
+            },
+            flex: {
+                label: "自慢モード",
+                options: [
+                    { topping: "全部乗せ・大盛り", comment: "写真は撮っていい。ただし完食してから語れ。" },
+                    { topping: "限定コラボトッピング", comment: "話題性で選んだことを、味の感想でごまかすつもりだろう。" },
+                    { topping: "ロースカツ＋エビフライ＋チーズ", comment: "その豪華さは、誰かに見せるためのものだと自分でも分かっているはずだ。" },
+                    { topping: "スペシャル全部乗せ大盛り2倍", comment: "量で語ろうとするその姿勢に、すでに敗北の匂いがする。" },
+                    { topping: "チーズ滝がけトッピング", comment: "見た目のインパクトを稼ぐその魂胆、店員にはとうに見抜かれている。" },
+                    { topping: "ダブルロースカツ＋温泉卵", comment: "断面を見せるための注文であることを、正直に認めろ。" },
+                    { topping: "全種フライ盛り合わせ", comment: "一皿に全種類を乗せるその強欲さが、あなたの承認欲求の総量だ。" },
+                    { topping: "大盛りライス＋全部乗せ", comment: "完食できるかより先に、撮影の構図を気にしている時点で答えは出ている。" },
+                    { topping: "ハーフ＆ハーフ全部乗せ", comment: "二種類の豪華さを一皿で語ろうとする、その欲張りな見栄っ張りぶり。" },
+                    { topping: "デコレーション風トッピング全載せ", comment: "味の説明よりビジュアルの説明の方が長くなる注文だ。" },
+                    { topping: "ロースカツタワー", comment: "積み上げることでしか自己表現できない不器用さが、逆に愛おしい。" },
+                    { topping: "エビフライ3尾＋チーズ滝がけ", comment: "「滝がけ」という言葉を使いたいだけの注文だと、もう気づけ。" },
+                    { topping: "全部乗せ＋辛さ5辛", comment: "見栄と刺激を同時に狙う、欲張りセットそのものだ。" },
+                    { topping: "メガ盛りミックスフライ", comment: "その量は胃袋のためではなく、フォロワーのために頼まれている。" },
+                    { topping: "トリプルチーズ全部乗せ", comment: "チーズの伸びる瞬間だけのために注文された、極めて動機の浅い一皿だ。" }
+                ]
+            },
+            safe: {
+                label: "安心モード",
+                options: [
+                    { topping: "いつものポークカレー", comment: "冒険する気力がない日があってもいい。ただし、それを一生の言い訳にするな。" },
+                    { topping: "ビーフカレー・レギュラー", comment: "安定を選ぶことは悪くない。安定に逃げていることを忘れなければ。" },
+                    { topping: "ミニサラダ付きセット", comment: "せめてもの罪悪感の埋め合わせに、野菜を一口だけ足しておけ。" },
+                    { topping: "プレーンポークカレー", comment: "変化を恐れるその選択を、今日だけは咎めないでおいてやる。" },
+                    { topping: "チキンカレー・普通盛り", comment: "無難という言葉の裏に隠れた臆病さは、今日は見逃してやる。" },
+                    { topping: "昔ながらのビーフカレー", comment: "新しいものに疲れた日は、懐かしさに逃げ込む権利がある。" },
+                    { topping: "ポークカレー＋味噌汁", comment: "和と洋を混ぜてでも安心感を最大化しようとする、その小心さが人間らしい。" },
+                    { topping: "ミニハンバーグ・普通盛り", comment: "冒険せずに満足しようとするその姿勢、悪くはないが成長もない。" },
+                    { topping: "カツなしカレーのみ", comment: "揚げ物すら今日は不要だ。そこまで削ぎ落とした安心感を大事にしろ。" },
+                    { topping: "ハーフサイズ・チキンカレー", comment: "量まで控えめにして、今日という日全体を無難に終わらせようとしている。" },
+                    { topping: "昔から変わらぬソースカレー", comment: "変化を拒むその味覚こそが、今日のあなたの精神安定剤だ。" },
+                    { topping: "ミニポークカレー＋漬物", comment: "小さくまとまろうとするその姿勢、悪目立ちしたくない日にはちょうどいい。" },
+                    { topping: "ビーフカレー＋福神漬け", comment: "定番の組み合わせでしか安心できない、そのこと自体が今日のあなたの答えだ。" },
+                    { topping: "チキンカレー・甘口", comment: "辛さからも量からも逃げ、今日はとにかく逃げ切ることを最優先にしろ。" },
+                    { topping: "プレーンカレー＋ミニサラダ", comment: "冒険せず、罪悪感も持たず、ただ無難に一日を終わらせる選択だ。" }
+                ]
+            }
+        };
+
+        let currentStep = 0;
+        const answers = {};
+
+        function renderQuestion() {
+            const q = flow[currentStep];
+            document.getElementById("qNum").textContent = `QUESTION ${String(currentStep + 1).padStart(2, '0')} / ${String(flow.length).padStart(2, '0')}`;
+            document.getElementById("qText").textContent = q.text;
+            document.getElementById("progressBar").style.width = `${(currentStep / flow.length) * 100}%`;
+
+            const optionArea = document.getElementById("optionArea");
+            optionArea.innerHTML = q.options.map((opt, i) => `
+                <button onclick="selectOption('${q.id}', ${i})" class="mood-btn text-left border border-white/10 rounded-2xl p-5 md:p-6">
+                    <span class="font-serif text-lg">${opt}</span>
+                </button>
+            `).join("");
+        }
+
+        function selectOption(id, index) {
+            answers[id] = index;
+            currentStep++;
+            if (currentStep < flow.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById("progressBar").style.width = "100%";
+            document.getElementById("questionArea").classList.add("hidden");
+            document.getElementById("resultArea").classList.remove("hidden");
+
+            const staminaLabel = flow[0].options[answers.stamina];
+            const companyLabel = flow[1].options[answers.company];
+            document.getElementById("tagStamina").textContent = `体力: ${staminaLabel}`;
+            document.getElementById("tagCompany").textContent = `相手: ${companyLabel}`;
+
+            const moodKey = moodKeys[answers.mood];
+            const mood = moodMap[moodKey];
+            const choice = mood.options[Math.floor(Math.random() * mood.options.length)];
+
+            document.getElementById("resMoodLabel").textContent = mood.label;
+            document.getElementById("resTopping").textContent = choice.topping;
+            document.getElementById("resComment").textContent = choice.comment;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
